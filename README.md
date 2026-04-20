@@ -17,7 +17,7 @@ It eliminates grading fatigue and provides instant visual feedback on student pe
 * **Auto-Save Draft:** Accidentally closed the tab? Your current grading progress and feedback text are automatically saved to `sessionStorage`.
 * **Cohort Analytics:** Save multiple student evaluations to build a localized database (`localStorage`). View class averages, total students evaluated, and identify systemic bottlenecks.
 * **Radar Chart Gap Analysis:** Generate instant SVG spider charts comparing individual student performance against the cohort average. Perfect for 1-on-1 feedback sessions.
-* **One-Click Export:** Copy evaluation summaries to the clipboard for instant messaging, or export the entire cohort database to a `.csv` file for further system analysis.
+* **One-Click Export:** Copy evaluation summaries to the clipboard for instant messaging, or export the entire cohort database to a `.xlsx` file for further system analysis.
 
 ## 🛠️ How to Use
 1. Clone this repository or download the `index.html` file.
