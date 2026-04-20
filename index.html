@@ -127,7 +127,7 @@ body.edit-mode .add-dim-btn{display:block;}
 .feedback-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);margin-bottom:6px;display:block;}
 .feedback-box{width:100%;border:1px solid var(--border);border-radius:8px;background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);padding:12px 14px;resize:vertical;min-height:70px;}
 
-/* Analytics & Radar Chart Styles */
+/* Analytics & Table Styles */
 .analytics-header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--navy); padding-bottom: 20px;}
 .stat-card-row { display: flex; gap: 20px; margin-bottom: 30px;}
 .stat-card { flex: 1; background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; box-shadow:0 4px 12px rgba(28,43,74,.05); }
@@ -138,27 +138,41 @@ body.edit-mode .add-dim-btn{display:block;}
 .chart-row { display: flex; align-items: center; margin-bottom: 16px;}
 .chart-label { width: 300px; font-size: 13px; font-weight: 500; color: var(--navy); padding-right: 16px;}
 .chart-bar-wrap { flex: 1; background: var(--border); height: 12px; border-radius: 6px; overflow: hidden;}
-.chart-bar-fill { height: 100%; background: var(--gold); border-radius: 6px;}
+.chart-bar-fill { height: 100%; background: var(--gold); border-radius: 6px; transition: width 0.4s;}
 .chart-score { width: 50px; text-align: right; font-size: 13px; font-weight: 600; color: var(--slate); }
-
 .history-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align:left;}
 .history-table th { padding: 12px; background: var(--navy); color: white; font-weight: 500;}
 .history-table td { padding: 12px; border-bottom: 1px solid var(--border); color: var(--navy);}
 .action-link { color: var(--gold); cursor: pointer; font-weight: 500; margin-right:12px; text-decoration:none;}
+.action-link:hover { text-decoration: underline; }
 .action-link.del { color: var(--red); }
 
-/* Modal Radar */
+/* Modal Radar Editable - Split View */
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(28,43,74,0.8); z-index:999; justify-content:center; align-items:center;}
-.modal-content { background:var(--paper); padding:30px; border-radius:12px; max-width:650px; width:100%; position:relative; display:flex; flex-direction:column; max-height: 90vh;}
-.close-btn { position:absolute; top:20px; right:20px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate);}
-.radar-identity { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; font-size: 13px; color: var(--slate); }
+.modal-content { background:var(--paper); padding:30px; border-radius:12px; max-width:850px; width:95%; position:relative; display:flex; flex-direction:column; max-height: 90vh;}
+.modal-split { display: flex; gap: 30px; margin-top: 10px; overflow-y: hidden; min-height: 0;}
+.modal-left { flex: 1; display: flex; flex-direction: column; align-items: center;}
+.modal-right { flex: 1.2; display: flex; flex-direction: column; overflow-y: auto; padding-right: 10px;}
+@media (max-width: 768px) {
+    .modal-split { flex-direction: column; overflow-y: auto;}
+    .modal-right { overflow-y: visible; padding-right: 0;}
+}
+
+.close-btn { position:absolute; top:20px; right:20px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate); z-index:10;}
+.radar-identity { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; font-size: 13px; color: var(--slate); width: 100%; background: var(--cream); padding: 12px; border-radius: 8px;}
 .radar-id-item strong { color: var(--navy); }
-.radar-legend { display:flex; gap:16px; justify-content:center; margin-top:10px; font-size:12px; color:var(--slate);}
+.radar-legend { display:flex; gap:16px; justify-content:center; margin-top:0px; font-size:12px; color:var(--slate);}
 .legend-item { display:flex; align-items:center; gap:6px;}
 .legend-color { width:12px; height:12px; border-radius:3px;}
-.radar-feedback-section { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); text-align: left; }
-.radar-feedback-title { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--slate); margin-bottom: 8px; }
-.radar-feedback-text { font-size: 13px; color: var(--navy); background: var(--cream); padding: 12px; border-radius: 6px; white-space: pre-wrap; line-height: 1.5; max-height: 120px; overflow-y: auto;}
+
+.modal-edit-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);}
+.modal-edit-label { font-size: 13px; font-weight: 600; color: var(--navy); }
+.modal-edit-select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--navy); background: white; outline: none;}
+.modal-edit-select:focus { border-color: var(--teal); }
+
+.radar-feedback-title { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--slate); margin-bottom: 8px; margin-top: 10px;}
+.radar-feedback-text { font-size: 13px; color: var(--navy); background: white; padding: 12px; border-radius: 6px; white-space: pre-wrap; line-height: 1.5; min-height: 80px; width: 100%; border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; resize: vertical;}
+.radar-feedback-text:focus { border-color: var(--teal); outline: none;}
 
 @media print{.toolbar,.edit-toolbar,.gs-editor,.level-edit-bar,.add-dim-btn,.dim-remove{display:none!important;}.page{padding:24px;}}
 </style>
@@ -282,25 +296,36 @@ body.edit-mode .add-dim-btn{display:block;}
 <div class="modal-overlay" id="radarModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('radarModal').style.display='none'">✕</button>
-        <div class="chart-title" style="display:block;">Gap Analysis</div>
+        <div class="chart-title" style="display:block;">Review & Edit Gap Analysis</div>
         
-        <div class="radar-identity">
-            <div class="radar-id-item"><strong>Name:</strong> <span id="radarStudentName">-</span></div>
-            <div class="radar-id-item"><strong>ID/NIM:</strong> <span id="radarStudentId">-</span></div>
-            <div class="radar-id-item"><strong>Date:</strong> <span id="radarStudentDate">-</span></div>
-            <div class="radar-id-item"><strong>Total Score:</strong> <span id="radarStudentScore">-</span> / 100</div>
-        </div>
+        <div class="modal-split">
+            <div class="modal-left">
+                <div class="radar-identity">
+                    <div class="radar-id-item"><strong>Name:</strong> <span id="radarStudentName">-</span></div>
+                    <div class="radar-id-item"><strong>ID/NIM:</strong> <span id="radarStudentId">-</span></div>
+                    <div class="radar-id-item"><strong>Date:</strong> <span id="radarStudentDate">-</span></div>
+                    <div class="radar-id-item" style="margin-top: 4px; font-size: 15px; color: var(--teal);">
+                        <strong>Total Score: <span id="radarStudentScore" style="font-weight: 600;">-</span> / 100</strong>
+                    </div>
+                </div>
 
-        <div style="text-align:center; padding: 10px 0;" id="radarSvgContainer"></div>
-        
-        <div class="radar-legend">
-            <div class="legend-item"><div class="legend-color" style="background:var(--gold);"></div> Student Score</div>
-            <div class="legend-item"><div class="legend-color" style="background:rgba(42,123,111,0.3);"></div> Cohort Average</div>
-        </div>
+                <div style="text-align:center; padding: 10px 0; width: 100%;" id="radarSvgContainer"></div>
+                
+                <div class="radar-legend">
+                    <div class="legend-item"><div class="legend-color" style="background:var(--gold);"></div> Student Score</div>
+                    <div class="legend-item"><div class="legend-color" style="background:rgba(42,123,111,0.3);"></div> Cohort Average</div>
+                </div>
+            </div>
 
-        <div class="radar-feedback-section">
-            <div class="radar-feedback-title">Feedback & Notes</div>
-            <div class="radar-feedback-text" id="radarFeedbackText">No feedback provided.</div>
+            <div class="modal-right">
+                <div class="radar-feedback-title" style="margin-top: 0;">Adjust Scores (Real-Time)</div>
+                <div id="modalSlidersContainer"></div>
+
+                <div class="radar-feedback-title">Feedback & Notes</div>
+                <textarea class="radar-feedback-text" id="radarFeedbackText" placeholder="Edit notes here..."></textarea>
+                
+                <button class="btn btn-gold" style="width: 100%; padding: 12px; font-size: 14px; margin-top: auto;" onclick="saveModalChanges()">Simpan Perubahan</button>
+            </div>
         </div>
     </div>
 </div>
@@ -349,11 +374,11 @@ var rubric={
   ]
 };
 
-// TAMBAHAN: Variabel editingIndex untuk melacak data yang sedang diedit
-var scores={}, nextId=10, editMode=false, editingIndex = -1;
+var scores={}, nextId=10, editMode=false;
 var PRIORITIES=["high","medium","low"];
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
+// ── DRAFT SYSTEM ────────────────────────────────────────────────────────────
 function saveDraft() {
     if(editMode) return;
     var draft = {
@@ -364,13 +389,7 @@ function saveDraft() {
         feedback: document.getElementById("feedbackBox").value
     };
     sessionStorage.setItem("rubricDraft", JSON.stringify(draft));
-    if(editingIndex === -1) {
-        var badge = document.getElementById("draftBadge");
-        badge.textContent = "Unsaved Draft";
-        badge.style.display = "inline-block";
-        badge.style.background = "rgba(255,255,255,0.1)";
-        badge.style.color = "#AAB4C8";
-    }
+    document.getElementById("draftBadge").style.display = "inline-block";
 }
 function loadDraft() {
     var draftStr = sessionStorage.getItem("rubricDraft");
@@ -391,28 +410,15 @@ function clearDraft() {
     document.getElementById("draftBadge").style.display = "none";
 }
 
+// ── EXCEL TEMPLATE IMPORT & EXPORT ──────────────────────────────────────────
 function exportExcelTemplate() {
     var dimRows = [];
     rubric.dimensions.forEach(d => {
         d.levels.forEach(l => {
-            dimRows.push({
-                "Dim ID": d.id,
-                "Dimension Name": d.name,
-                "Weight": d.weight,
-                "Priority": d.priority,
-                "Level Score": l.score,
-                "Level Label": l.label,
-                "Level Desc": l.desc
-            });
+            dimRows.push({"Dim ID": d.id,"Dimension Name": d.name,"Weight": d.weight,"Priority": d.priority,"Level Score": l.score,"Level Label": l.label,"Level Desc": l.desc});
         });
     });
-
-    var gsRows = rubric.gradeScale.map(g => ({
-        "Grade": g.grade,
-        "Min Score": g.min,
-        "Label": g.label
-    }));
-
+    var gsRows = rubric.gradeScale.map(g => ({"Grade": g.grade,"Min Score": g.min,"Label": g.label}));
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dimRows), "Dimensions");
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(gsRows), "GradeScale");
@@ -422,50 +428,36 @@ function exportExcelTemplate() {
 function importExcelTemplate(event) {
     var file = event.target.files[0];
     if (!file) return;
-    
     var reader = new FileReader();
     reader.onload = function(e) {
         var data = new Uint8Array(e.target.result);
         try {
             var wb = XLSX.read(data, {type: 'array'});
             var newRubric = { dimensions: [], gradeScale: [] };
-            
             if(wb.Sheets["GradeScale"]) {
                 var gsData = XLSX.utils.sheet_to_json(wb.Sheets["GradeScale"]);
-                newRubric.gradeScale = gsData.map(r => ({
-                    grade: String(r["Grade"]),
-                    min: Number(r["Min Score"]),
-                    label: String(r["Label"])
-                }));
+                newRubric.gradeScale = gsData.map(r => ({grade: String(r["Grade"]),min: Number(r["Min Score"]),label: String(r["Label"])}));
             }
-            
             if(wb.Sheets["Dimensions"]) {
                 var dimData = XLSX.utils.sheet_to_json(wb.Sheets["Dimensions"]);
                 var dimMap = {};
-                
                 dimData.forEach(r => {
                     var id = r["Dim ID"];
-                    if(!dimMap[id]) {
-                        dimMap[id] = { id: id, name: String(r["Dimension Name"]), weight: Number(r["Weight"]), priority: String(r["Priority"]).toLowerCase(), levels: [] };
-                    }
+                    if(!dimMap[id]) dimMap[id] = { id: id, name: String(r["Dimension Name"]), weight: Number(r["Weight"]), priority: String(r["Priority"]).toLowerCase(), levels: [] };
                     dimMap[id].levels.push({ score: Number(r["Level Score"]), label: String(r["Level Label"]), desc: String(r["Level Desc"]) });
                 });
                 newRubric.dimensions = Object.values(dimMap);
             }
-            
             if(newRubric.dimensions.length > 0) {
                 rubric = newRubric; scores = {}; render(); alert("Template Excel berhasil dimuat!");
-            } else {
-                alert("Format file Excel tidak sesuai.");
-            }
-        } catch(err) {
-            alert("Terjadi kesalahan saat membaca file Excel.");
-        }
+            } else alert("Format file Excel tidak sesuai.");
+        } catch(err) { alert("Terjadi kesalahan saat membaca file Excel."); }
     };
     reader.readAsArrayBuffer(file);
     event.target.value = '';
 }
 
+// ── RENDER CORE ─────────────────────────────────────────────────────────────
 function render(){
   var c=document.getElementById("dimContainer");
   c.innerHTML="";
@@ -481,7 +473,6 @@ function buildCard(dim,idx){
   var card=document.createElement("div");
   card.className="dim-card priority-"+dim.priority;
   card.dataset.id=dim.id;
-
   var sorted=dim.levels.slice().sort(function(a,b){return b.score-a.score;});
   var n=sorted.length;
   var maxS=n?sorted[0].score:4;
@@ -493,10 +484,8 @@ function buildCard(dim,idx){
     var badgeStyle=isSel?"background:"+c.sBadge+";color:"+c.sMuted+";border-color:"+c.sBadge+";":"background:"+c.bg+";color:"+c.fg+";";
     var labelStyle=isSel?"color:"+c.sText+";":"color:var(--navy);";
     var descStyle=isSel?"color:"+c.sMuted+";":"color:var(--slate);";
-    return '<div class="level-cell'+(isSel?" selected":"")
-      +'" style="'+cellStyle+'" onclick="selectScore('+dim.id+','+lvl.score+')" data-dim="'+dim.id+'">'
-      +'<span class="level-badge" style="'+badgeStyle+'">'
-      +'<span class="level-score-dot"></span>'+lvl.score+'/'+maxS+'</span>'
+    return '<div class="level-cell'+(isSel?" selected":"")+'" style="'+cellStyle+'" onclick="selectScore('+dim.id+','+lvl.score+')" data-dim="'+dim.id+'">'
+      +'<span class="level-badge" style="'+badgeStyle+'"><span class="level-score-dot"></span>'+lvl.score+'/'+maxS+'</span>'
       +'<span class="level-label" style="'+labelStyle+'" contenteditable="false" onblur="updateLevelLabel('+dim.id+','+lvl.score+',this.textContent)">'+esc(lvl.label)+'</span>'
       +'<span class="level-desc" style="'+descStyle+'" contenteditable="false" onblur="updateLevelDesc('+dim.id+','+lvl.score+',this.textContent)">'+esc(lvl.desc)+'</span>'
       +'<div class="level-edit-bar">'
@@ -542,19 +531,12 @@ function updateTotal(){
   else{document.getElementById("gradeBadge").textContent="—"; document.getElementById("totalNote").textContent=sc+" of "+rubric.dimensions.length+" scored";}
 }
 
-// PERBAIKAN: Reset juga mengembalikan state edit ke semula
 function resetScores(){
     scores={};
     document.getElementById("studentName").value="";
     document.getElementById("studentId").value="";
     document.getElementById("feedbackBox").value="";
     clearDraft();
-    editingIndex = -1;
-    var badge = document.getElementById("draftBadge");
-    badge.textContent = "Unsaved Draft";
-    badge.style.background = "rgba(255,255,255,0.1)";
-    badge.style.color = "#AAB4C8";
-    badge.style.display = "none";
     render();
 }
 
@@ -593,66 +575,25 @@ function copySummary(){
   navigator.clipboard.writeText(lines.join("\n")).then(()=>alert("Copied!")).catch(()=>prompt("Copy this:",lines.join("\n")));
 }
 
+// ── COHORT & ANALYTICS ──────────────────────────────────────────────────────
 function getHistory() { return JSON.parse(localStorage.getItem("rubricHistory") || "[]"); }
 function saveHistory(arr) { localStorage.setItem("rubricHistory", JSON.stringify(arr)); }
 
-// PERBAIKAN: Fungsi Save untuk menangani data baru atau pembaruan data lama
 function saveEvaluation() {
     if (!isComplete()) { alert("Lengkapi penilaian sebelum menyimpan."); return; }
     var history = getHistory();
-    
-    var record = {
+    history.push({
         name: document.getElementById("studentName").value || "Student " + (history.length + 1),
         id: document.getElementById("studentId").value || "N/A",
         date: document.getElementById("dateField").value,
         total: parseFloat(calcTotal().toFixed(2)),
         scores: Object.assign({}, scores),
         feedback: document.getElementById("feedbackBox").value.trim() 
-    };
-
-    if (editingIndex >= 0) {
-        history[editingIndex] = record;
-        editingIndex = -1; // Selesai edit
-        alert("Data evaluasi berhasil diperbarui!");
-    } else {
-        history.push(record);
-        alert("Data tersimpan ke Cohort Analytics!");
-    }
-
+    });
     saveHistory(history);
     clearDraft();
+    alert("Data tersimpan ke Cohort Analytics!");
     resetScores();
-}
-
-// FITUR BARU: Menarik kembali data dari memori ke form penilaian
-function editHistoryRecord(index) {
-    var history = getHistory();
-    var record = history[index];
-    
-    // Load ke input form
-    document.getElementById("studentName").value = record.name || "";
-    document.getElementById("studentId").value = record.id || "";
-    document.getElementById("dateField").value = record.date || "";
-    document.getElementById("feedbackBox").value = record.feedback || "";
-    
-    // Load skor yang lama
-    scores = Object.assign({}, record.scores);
-    
-    // Set state edit
-    editingIndex = index;
-    
-    // Pindah tampilan
-    document.getElementById("analyticsView").style.display = "none";
-    document.getElementById("gradingView").style.display = "block";
-    
-    // Ubah visual badge agar tahu sedang mengedit
-    var badge = document.getElementById("draftBadge");
-    badge.textContent = "Editing Record...";
-    badge.style.display = "inline-block";
-    badge.style.background = "rgba(181,134,58,0.2)"; // Warna emas
-    badge.style.color = "#F0C070";
-    
-    render();
 }
 
 function deleteHistoryRecord(index) {
@@ -708,46 +649,77 @@ function renderAnalytics() {
     });
     document.getElementById("chartContainer").innerHTML = chartHtml;
 
-    // TAMBAHAN: Tombol 'Edit' di baris tabel
+    // TOMBOL TERINTEGRASI: "Review / Edit" untuk membuka Split-View Radar
     document.getElementById("historyTableBody").innerHTML = history.map((r,i) => 
         `<tr>
             <td>${esc(r.date)}</td><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td style="font-weight:600;">${r.total.toFixed(1)}</td>
             <td>
-                <a class="action-link" onclick="editHistoryRecord(${i})">Edit</a>
-                <a class="action-link" onclick="openRadar(${i})">Radar Gap</a>
+                <a class="action-link" onclick="openRadar(${i})">Review / Edit</a>
                 <a class="action-link del" onclick="deleteHistoryRecord(${i})">Hapus</a>
             </td>
         </tr>`
     ).join("");
 }
 
+// ── REAL-TIME EDITABLE RADAR MODAL (SPLIT VIEW) ─────────────────────────────
+var editingIndex = -1;
+var tempEditScores = {};
+var cohortAveragesForRadar = {};
+
 function openRadar(index) {
     var history = getHistory();
     var student = history[index];
-    var averages = calculateAverages(history);
+    cohortAveragesForRadar = calculateAverages(history);
+    editingIndex = index;
+    tempEditScores = Object.assign({}, student.scores);
     
     document.getElementById("radarStudentName").textContent = student.name;
     document.getElementById("radarStudentId").textContent = student.id || "N/A";
     document.getElementById("radarStudentDate").textContent = student.date || "N/A";
-    document.getElementById("radarStudentScore").textContent = student.total ? student.total.toFixed(1) : "0.0";
+    document.getElementById("radarFeedbackText").value = student.feedback || "";
 
-    var feedbackElem = document.getElementById("radarFeedbackText");
-    if (student.feedback && student.feedback.trim() !== "") {
-        feedbackElem.textContent = student.feedback;
-        feedbackElem.style.fontStyle = "normal";
-        feedbackElem.style.color = "var(--navy)";
-    } else {
-        feedbackElem.textContent = "Tidak ada catatan feedback untuk mahasiswa ini.";
-        feedbackElem.style.fontStyle = "italic";
-        feedbackElem.style.color = "var(--slate)";
-    }
+    renderModalSliders();
+    updateModalRadarView(); // Gambar grafik dan hitung skor pertama kali
 
     document.getElementById("radarModal").style.display = "flex";
+}
 
-    var size = 300, center = size/2, radius = 100;
+function renderModalSliders() {
+    var html = '';
+    rubric.dimensions.forEach(dim => {
+        var currentScore = tempEditScores[dim.id];
+        html += `
+        <div class="modal-edit-row">
+            <div class="modal-edit-label">${esc(dim.name)}</div>
+            <select class="modal-edit-select" onchange="handleModalScoreChange(${dim.id}, this.value)">
+                <option value="" disabled ${currentScore === undefined ? 'selected' : ''}>Pilih nilai...</option>
+                ${dim.levels.map(l => `<option value="${l.score}" ${l.score == currentScore ? 'selected' : ''}>${l.score} - ${esc(l.label)}</option>`).join('')}
+            </select>
+        </div>`;
+    });
+    document.getElementById("modalSlidersContainer").innerHTML = html;
+}
+
+function handleModalScoreChange(dimId, val) {
+    tempEditScores[dimId] = parseFloat(val);
+    updateModalRadarView(); // Hitung total baru & redraw SVG langsung
+}
+
+function updateModalRadarView() {
+    // 1. Recalculate Score
+    var t = 0;
+    rubric.dimensions.forEach(d => {
+        if(tempEditScores[d.id] !== undefined) {
+            var mx = Math.max(...d.levels.map(l=>l.score));
+            t += (tempEditScores[d.id] / mx) * d.weight;
+        }
+    });
+    document.getElementById("radarStudentScore").textContent = t.toFixed(1);
+
+    // 2. Draw SVG
+    var size = 260, center = size/2, radius = 90;
     var dims = rubric.dimensions;
     var num = dims.length;
-    
     var svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
     
     for(var lvl=1; lvl<=4; lvl++) {
@@ -764,8 +736,8 @@ function openRadar(index) {
         var ang = (Math.PI*2*i)/num - Math.PI/2;
         var x2 = center + radius*Math.cos(ang), y2 = center + radius*Math.sin(ang);
         svg += `<line x1="${center}" y1="${center}" x2="${x2}" y2="${y2}" stroke="var(--border)" stroke-width="1"/>`;
-        var lx = center + (radius+25)*Math.cos(ang), ly = center + (radius+15)*Math.sin(ang);
-        var lbl = d.name.length > 15 ? d.name.substring(0,12)+"..." : d.name;
+        var lx = center + (radius+20)*Math.cos(ang), ly = center + (radius+15)*Math.sin(ang);
+        var lbl = d.name.length > 12 ? d.name.substring(0,10)+"..." : d.name;
         svg += `<text x="${lx}" y="${ly}" font-size="10" font-family="DM Sans" text-anchor="middle" fill="var(--slate)">${esc(lbl)}</text>`;
     });
 
@@ -781,11 +753,28 @@ function openRadar(index) {
         return pts.join(' ');
     };
 
-    svg += `<polygon points="${getPoly(averages)}" fill="var(--teal)" fill-opacity="0.2" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4"/>`;
-    svg += `<polygon points="${getPoly(student.scores)}" fill="var(--gold)" fill-opacity="0.4" stroke="var(--gold)" stroke-width="2"/>`;
-
+    // Cohort (Teal) vs Current Edits (Gold)
+    svg += `<polygon points="${getPoly(cohortAveragesForRadar)}" fill="var(--teal)" fill-opacity="0.2" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4" style="transition: all 0.3s ease;"/>`;
+    svg += `<polygon points="${getPoly(tempEditScores)}" fill="var(--gold)" fill-opacity="0.4" stroke="var(--gold)" stroke-width="2" style="transition: all 0.3s ease;"/>`;
     svg += `</svg>`;
+    
     document.getElementById("radarSvgContainer").innerHTML = svg;
+}
+
+function saveModalChanges() {
+    var history = getHistory();
+    var student = history[editingIndex];
+    
+    // Timpa data lama dengan data baru dari modal
+    student.scores = Object.assign({}, tempEditScores);
+    student.feedback = document.getElementById("radarFeedbackText").value.trim();
+    student.total = parseFloat(document.getElementById("radarStudentScore").textContent);
+    
+    history[editingIndex] = student;
+    saveHistory(history);
+    
+    document.getElementById("radarModal").style.display = "none";
+    renderAnalytics(); // Refresh halaman analitik agar nilai terbaru muncul
 }
 
 function clearAllHistory() {
@@ -795,21 +784,12 @@ function clearAllHistory() {
 function exportAnalyticsExcel() {
     var history = getHistory();
     if (!history.length) return alert("Belum ada data untuk di-export.");
-    
     var rows = history.map(r => {
-        var obj = {
-            "Date": r.date,
-            "Student Name": r.name,
-            "ID / NIM": r.id,
-            "Total Score": r.total
-        };
-        rubric.dimensions.forEach(d => {
-            obj[d.name] = r.scores[d.id] || 0;
-        });
+        var obj = {"Date": r.date, "Student Name": r.name, "ID / NIM": r.id, "Total Score": r.total};
+        rubric.dimensions.forEach(d => { obj[d.name] = r.scores[d.id] || 0; });
         obj["Feedback & Notes"] = r.feedback || "";
         return obj;
     });
-
     var ws = XLSX.utils.json_to_sheet(rows);
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Cohort Analytics");
