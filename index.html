@@ -26,7 +26,7 @@
 body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--navy);min-height:100vh;}
 .toolbar{position:sticky;top:0;z-index:100;background:var(--navy);display:flex;align-items:center;gap:8px;padding:10px 32px;box-shadow:0 2px 12px rgba(0,0,0,.18);flex-wrap:wrap;}
 .toolbar-title{font-size:13px;font-weight:500;color:#AAB4C8;margin-right:auto; display:flex; align-items:center; gap:10px;}
-.draft-badge{font-size:10px; background:rgba(255,255,255,0.1); color:#AAB4C8; padding:3px 8px; border-radius:4px; display:none;}
+.draft-badge{font-size:10px; background:rgba(255,255,255,0.1); color:#AAB4C8; padding:3px 8px; border-radius:4px; display:none; transition: all 0.2s;}
 .btn{border:none;cursor:pointer;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:7px 16px;transition:all .15s;}
 .btn-ghost{background:transparent;color:#AAB4C8;border:1px solid rgba(255,255,255,.15);}
 .btn-ghost:hover{background:rgba(255,255,255,.08);color:white;}
@@ -349,11 +349,11 @@ var rubric={
   ]
 };
 
-var scores={}, nextId=10, editMode=false;
+// TAMBAHAN: Variabel editingIndex untuk melacak data yang sedang diedit
+var scores={}, nextId=10, editMode=false, editingIndex = -1;
 var PRIORITIES=["high","medium","low"];
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
-// ── DRAFT SYSTEM ────────────────────────────────────────────────────────────
 function saveDraft() {
     if(editMode) return;
     var draft = {
@@ -364,7 +364,13 @@ function saveDraft() {
         feedback: document.getElementById("feedbackBox").value
     };
     sessionStorage.setItem("rubricDraft", JSON.stringify(draft));
-    document.getElementById("draftBadge").style.display = "inline-block";
+    if(editingIndex === -1) {
+        var badge = document.getElementById("draftBadge");
+        badge.textContent = "Unsaved Draft";
+        badge.style.display = "inline-block";
+        badge.style.background = "rgba(255,255,255,0.1)";
+        badge.style.color = "#AAB4C8";
+    }
 }
 function loadDraft() {
     var draftStr = sessionStorage.getItem("rubricDraft");
@@ -385,9 +391,7 @@ function clearDraft() {
     document.getElementById("draftBadge").style.display = "none";
 }
 
-// ── EXCEL TEMPLATE IMPORT & EXPORT (SheetJS) ────────────────────────────────
 function exportExcelTemplate() {
-    // Siapkan baris untuk Sheet Dimensions
     var dimRows = [];
     rubric.dimensions.forEach(d => {
         d.levels.forEach(l => {
@@ -403,19 +407,15 @@ function exportExcelTemplate() {
         });
     });
 
-    // Siapkan baris untuk Sheet GradeScale
     var gsRows = rubric.gradeScale.map(g => ({
         "Grade": g.grade,
         "Min Score": g.min,
         "Label": g.label
     }));
 
-    // Bikin Workbook baru pakai SheetJS
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dimRows), "Dimensions");
     XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(gsRows), "GradeScale");
-    
-    // Download file
     XLSX.writeFile(wb, "Rubric_Template.xlsx");
 }
 
@@ -430,7 +430,6 @@ function importExcelTemplate(event) {
             var wb = XLSX.read(data, {type: 'array'});
             var newRubric = { dimensions: [], gradeScale: [] };
             
-            // Parsing GradeScale
             if(wb.Sheets["GradeScale"]) {
                 var gsData = XLSX.utils.sheet_to_json(wb.Sheets["GradeScale"]);
                 newRubric.gradeScale = gsData.map(r => ({
@@ -440,7 +439,6 @@ function importExcelTemplate(event) {
                 }));
             }
             
-            // Parsing Dimensions
             if(wb.Sheets["Dimensions"]) {
                 var dimData = XLSX.utils.sheet_to_json(wb.Sheets["Dimensions"]);
                 var dimMap = {};
@@ -448,40 +446,26 @@ function importExcelTemplate(event) {
                 dimData.forEach(r => {
                     var id = r["Dim ID"];
                     if(!dimMap[id]) {
-                        dimMap[id] = {
-                            id: id,
-                            name: String(r["Dimension Name"]),
-                            weight: Number(r["Weight"]),
-                            priority: String(r["Priority"]).toLowerCase(),
-                            levels: []
-                        };
+                        dimMap[id] = { id: id, name: String(r["Dimension Name"]), weight: Number(r["Weight"]), priority: String(r["Priority"]).toLowerCase(), levels: [] };
                     }
-                    dimMap[id].levels.push({
-                        score: Number(r["Level Score"]),
-                        label: String(r["Level Label"]),
-                        desc: String(r["Level Desc"])
-                    });
+                    dimMap[id].levels.push({ score: Number(r["Level Score"]), label: String(r["Level Label"]), desc: String(r["Level Desc"]) });
                 });
                 newRubric.dimensions = Object.values(dimMap);
             }
             
             if(newRubric.dimensions.length > 0) {
-                rubric = newRubric;
-                scores = {}; 
-                render();
-                alert("Template Excel berhasil dimuat!");
+                rubric = newRubric; scores = {}; render(); alert("Template Excel berhasil dimuat!");
             } else {
-                alert("Format file Excel tidak sesuai. Pastikan strukturnya sama dengan hasil download.");
+                alert("Format file Excel tidak sesuai.");
             }
         } catch(err) {
             alert("Terjadi kesalahan saat membaca file Excel.");
         }
     };
     reader.readAsArrayBuffer(file);
-    event.target.value = ''; // reset
+    event.target.value = '';
 }
 
-// ── RENDER CORE ─────────────────────────────────────────────────────────────
 function render(){
   var c=document.getElementById("dimContainer");
   c.innerHTML="";
@@ -558,12 +542,19 @@ function updateTotal(){
   else{document.getElementById("gradeBadge").textContent="—"; document.getElementById("totalNote").textContent=sc+" of "+rubric.dimensions.length+" scored";}
 }
 
+// PERBAIKAN: Reset juga mengembalikan state edit ke semula
 function resetScores(){
     scores={};
     document.getElementById("studentName").value="";
     document.getElementById("studentId").value="";
     document.getElementById("feedbackBox").value="";
     clearDraft();
+    editingIndex = -1;
+    var badge = document.getElementById("draftBadge");
+    badge.textContent = "Unsaved Draft";
+    badge.style.background = "rgba(255,255,255,0.1)";
+    badge.style.color = "#AAB4C8";
+    badge.style.display = "none";
     render();
 }
 
@@ -602,25 +593,66 @@ function copySummary(){
   navigator.clipboard.writeText(lines.join("\n")).then(()=>alert("Copied!")).catch(()=>prompt("Copy this:",lines.join("\n")));
 }
 
-// ── COHORT & ANALYTICS DENGAN EXCEL EXPORT ──────────────────────────────────
 function getHistory() { return JSON.parse(localStorage.getItem("rubricHistory") || "[]"); }
 function saveHistory(arr) { localStorage.setItem("rubricHistory", JSON.stringify(arr)); }
 
+// PERBAIKAN: Fungsi Save untuk menangani data baru atau pembaruan data lama
 function saveEvaluation() {
     if (!isComplete()) { alert("Lengkapi penilaian sebelum menyimpan."); return; }
     var history = getHistory();
-    history.push({
+    
+    var record = {
         name: document.getElementById("studentName").value || "Student " + (history.length + 1),
         id: document.getElementById("studentId").value || "N/A",
         date: document.getElementById("dateField").value,
         total: parseFloat(calcTotal().toFixed(2)),
         scores: Object.assign({}, scores),
         feedback: document.getElementById("feedbackBox").value.trim() 
-    });
+    };
+
+    if (editingIndex >= 0) {
+        history[editingIndex] = record;
+        editingIndex = -1; // Selesai edit
+        alert("Data evaluasi berhasil diperbarui!");
+    } else {
+        history.push(record);
+        alert("Data tersimpan ke Cohort Analytics!");
+    }
+
     saveHistory(history);
     clearDraft();
-    alert("Data tersimpan ke Cohort Analytics!");
     resetScores();
+}
+
+// FITUR BARU: Menarik kembali data dari memori ke form penilaian
+function editHistoryRecord(index) {
+    var history = getHistory();
+    var record = history[index];
+    
+    // Load ke input form
+    document.getElementById("studentName").value = record.name || "";
+    document.getElementById("studentId").value = record.id || "";
+    document.getElementById("dateField").value = record.date || "";
+    document.getElementById("feedbackBox").value = record.feedback || "";
+    
+    // Load skor yang lama
+    scores = Object.assign({}, record.scores);
+    
+    // Set state edit
+    editingIndex = index;
+    
+    // Pindah tampilan
+    document.getElementById("analyticsView").style.display = "none";
+    document.getElementById("gradingView").style.display = "block";
+    
+    // Ubah visual badge agar tahu sedang mengedit
+    var badge = document.getElementById("draftBadge");
+    badge.textContent = "Editing Record...";
+    badge.style.display = "inline-block";
+    badge.style.background = "rgba(181,134,58,0.2)"; // Warna emas
+    badge.style.color = "#F0C070";
+    
+    render();
 }
 
 function deleteHistoryRecord(index) {
@@ -676,10 +708,12 @@ function renderAnalytics() {
     });
     document.getElementById("chartContainer").innerHTML = chartHtml;
 
+    // TAMBAHAN: Tombol 'Edit' di baris tabel
     document.getElementById("historyTableBody").innerHTML = history.map((r,i) => 
         `<tr>
             <td>${esc(r.date)}</td><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td style="font-weight:600;">${r.total.toFixed(1)}</td>
             <td>
+                <a class="action-link" onclick="editHistoryRecord(${i})">Edit</a>
                 <a class="action-link" onclick="openRadar(${i})">Radar Gap</a>
                 <a class="action-link del" onclick="deleteHistoryRecord(${i})">Hapus</a>
             </td>
@@ -687,7 +721,6 @@ function renderAnalytics() {
     ).join("");
 }
 
-// ── SVG RADAR CHART GENERATOR ───────────────────────────────────────────────
 function openRadar(index) {
     var history = getHistory();
     var student = history[index];
@@ -759,12 +792,10 @@ function clearAllHistory() {
     if(confirm("Hapus SELURUH data angkatan ini?")) { localStorage.removeItem("rubricHistory"); renderAnalytics(); }
 }
 
-// EXPORT KE EXCEL MENGGUNAKAN SHEETJS
 function exportAnalyticsExcel() {
     var history = getHistory();
     if (!history.length) return alert("Belum ada data untuk di-export.");
     
-    // Format data untuk SheetJS
     var rows = history.map(r => {
         var obj = {
             "Date": r.date,
@@ -772,21 +803,16 @@ function exportAnalyticsExcel() {
             "ID / NIM": r.id,
             "Total Score": r.total
         };
-        // Masukkan nilai per kriteria
         rubric.dimensions.forEach(d => {
             obj[d.name] = r.scores[d.id] || 0;
         });
-        // Masukkan feedback
         obj["Feedback & Notes"] = r.feedback || "";
         return obj;
     });
 
-    // Buat worksheet dan workbook
     var ws = XLSX.utils.json_to_sheet(rows);
     var wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Cohort Analytics");
-    
-    // Download file
     XLSX.writeFile(wb, "Cohort_Analytics_Export.xlsx");
 }
 
