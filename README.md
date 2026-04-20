@@ -3,7 +3,7 @@
 A lightweight, single-page web application (SPA) designed to standardize academic evaluations, streamline live grading during presentations/mock defenses, and provide instant cohort analytics.
 
 ## 🚀 Live Demo
-https://suryamarthen-prog.github.io/simple-rubric-grader-app
+[https://suryamarthen-prog.github.io/simple-rubric-grader-app](https://suryamarthen-prog.github.io/simple-rubric-grader-app/)
 
 ## 💡 Why This Tool?
 Traditional LMS grading systems are often too bulky for live, fast-paced evaluations. This tool is built specifically for **evaluators, lecturers, and technical reviewers** who need a distraction-free, highly consistent grading interface that operates entirely offline in the browser. 
