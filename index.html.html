@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro-Rubric Evaluator & Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F7F4EF;--paper:#FDFBF8;--navy:#1C2B4A;--navy2:#2E4270;
+  --gold:#B5863A;--gold-lt:#F5ECD8;--teal:#2A7B6F;
+  --red:#B03A2E;--red-lt:#FAEAEA;--slate:#5A6475;--border:#DDD8CF;
+  --high-bg:#DDF0EC;--high-fg:#1A5C52;--med-bg:#E3EDFA;--med-fg:#1A3A6E;--low-bg:#F0EFEB;--low-fg:#5A5650;
+}
+:root{
+  --r0-bg:#DDF0EC;--r0-fg:#1A5C52;--r0-s:#1A5C52;--r0-sb:#0F3D36;--r0-st:#E0FBF4;--r0-sm:#9FD9CA;
+  --r1-bg:#E3EDFA;--r1-fg:#1A3A6E;--r1-s:#1A3A6E;--r1-sb:#0F2448;--r1-st:#E0EEFF;--r1-sm:#9AB8E8;
+  --r2-bg:#EDE8FA;--r2-fg:#3A1F6E;--r2-s:#3A1F6E;--r2-sb:#26144A;--r2-st:#EAE0FF;--r2-sm:#B8A0E8;
+  --r3-bg:#FEF3E2;--r3-fg:#7A4A10;--r3-s:#7A4A10;--r3-sb:#4F2E08;--r3-st:#FFF0D0;--r3-sm:#E8B870;
+  --r4-bg:#FDE8DC;--r4-fg:#7A2E10;--r4-s:#7A2E10;--r4-sb:#4F1E08;--r4-st:#FFE4D0;--r4-sm:#E89060;
+  --r5-bg:#FAEAEA;--r5-fg:#7A1F1F;--r5-s:#7A1F1F;--r5-sb:#500F0F;--r5-st:#FFE0E0;--r5-sm:#E89090;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--navy);min-height:100vh;}
+.toolbar{position:sticky;top:0;z-index:100;background:var(--navy);display:flex;align-items:center;gap:8px;padding:10px 32px;box-shadow:0 2px 12px rgba(0,0,0,.18);flex-wrap:wrap;}
+.toolbar-title{font-size:13px;font-weight:500;color:#AAB4C8;margin-right:auto; display:flex; align-items:center; gap:10px;}
+.draft-badge{font-size:10px; background:rgba(255,255,255,0.1); color:#AAB4C8; padding:3px 8px; border-radius:4px; display:none;}
+.btn{border:none;cursor:pointer;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:7px 16px;transition:all .15s;}
+.btn-ghost{background:transparent;color:#AAB4C8;border:1px solid rgba(255,255,255,.15);}
+.btn-ghost:hover{background:rgba(255,255,255,.08);color:white;}
+.btn-gold{background:var(--gold);color:white;}.btn-gold:hover{background:#9A7030;}
+.btn-teal{background:var(--teal);color:white;}.btn-teal:hover{background:#205F55;}
+.btn-sm{padding: 5px 12px; font-size:11px;}
+.mode-badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;}
+.mode-edit{background:rgba(181,134,58,.2);color:#F0C070;}
+.mode-score{background:rgba(42,123,111,.2);color:#7ECFC5;}
+
+.edit-toolbar {display: none; background: var(--navy2); padding: 12px 32px; gap: 12px; box-shadow: inset 0 3px 6px rgba(0,0,0,0.15);}
+body.edit-mode .edit-toolbar {display: flex; align-items: center;}
+
+[contenteditable]{outline:none;}
+[contenteditable]:focus{background:rgba(181,134,58,.09);border-radius:3px;}
+.edit-hint{display:none;font-size:10px;color:var(--gold);font-style:italic;margin-left:6px;opacity:.7;}
+body.edit-mode .edit-hint{display:inline;}
+body.edit-mode [contenteditable]:hover{background:rgba(181,134,58,.06);border-radius:3px;cursor:text;}
+.page{max-width:1120px;margin:0 auto;padding:32px 32px 80px;}
+
+.rubric-header{margin-bottom:40px;border-bottom:2px solid var(--navy);padding-bottom:24px;}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;}
+.header-left{flex:1;min-width:260px;}
+.tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.tag{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:var(--gold-lt);color:var(--gold);border:1px solid rgba(181,134,58,.3);}
+.rubric-title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;line-height:1.1;color:var(--navy);margin-bottom:6px;}
+.rubric-course{font-size:15px;color:var(--slate);font-weight:300;}
+.rubric-desc{font-size:13px;color:var(--slate);margin-top:10px;line-height:1.7;max-width:560px;}
+.header-meta{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
+.field-group{display:flex;flex-direction:column;gap:3px;}
+.field-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);}
+.field-input{border:none;border-bottom:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);padding:4px 2px;width:220px;outline:none;transition:border-color .15s;}
+.field-input:focus{border-bottom-color:var(--navy);}
+
+.dimensions{display:flex;flex-direction:column;gap:16px;}
+.dim-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:box-shadow .2s;}
+.dim-card:hover{box-shadow:0 4px 20px rgba(28,43,74,.08);}
+.dim-header{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;border-bottom:1px solid var(--border);}
+.dim-number{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--border);min-width:26px;}
+.dim-name-wrap{flex:1;}
+.dim-name{font-size:15px;font-weight:500;color:var(--navy);}
+.dim-priority-badge{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.07em;padding:3px 10px;border-radius:20px;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;}
+.priority-high .dim-priority-badge{background:var(--high-bg);color:var(--high-fg);}
+.priority-medium .dim-priority-badge{background:var(--med-bg);color:var(--med-fg);}
+.priority-low .dim-priority-badge{background:var(--low-bg);color:var(--low-fg);}
+.dim-weight{font-size:13px;font-weight:500;color:var(--slate);min-width:40px;text-align:right;}
+.dim-weight-input{width:52px;text-align:right;border:none;border-bottom:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--slate);outline:none;display:none;}
+body.edit-mode .dim-weight{display:none;}
+body.edit-mode .dim-weight-input{display:inline-block;}
+.dim-remove{display:none;background:none;border:none;cursor:pointer;color:var(--red);font-size:16px;padding:0 4px;line-height:1;opacity:.5;}
+body.edit-mode .dim-remove{display:block;}
+
+.levels-grid{display:grid;}
+.level-cell{padding:12px 14px;border-right:1px solid var(--border);position:relative;transition:background .15s;}
+.level-cell:last-child{border-right:none;}
+body.score-mode .level-cell{cursor:pointer;}
+body.score-mode .level-cell:hover{filter:brightness(.97);}
+.level-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:500;padding:3px 8px;border-radius:20px;margin-bottom:7px;border:1.5px solid transparent;font-family:'DM Sans',sans-serif;transition:all .15s;}
+.level-score-dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.6;display:inline-block;}
+.level-label{font-size:13px;font-weight:500;color:var(--navy);display:block;margin-bottom:4px;}
+.level-desc{font-size:12px;color:var(--slate);line-height:1.6;display:block;}
+
+.level-edit-bar{display:none;gap:4px;margin-top:8px;}
+body.edit-mode .level-edit-bar{display:flex;}
+.lev-btn{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid var(--border);background:var(--cream);color:var(--slate);cursor:pointer;font-family:'DM Sans',sans-serif;}
+.lev-btn:hover{background:var(--gold-lt);border-color:var(--gold);color:var(--gold);}
+.lev-btn-del{color:var(--red);border-color:rgba(176,58,46,.3);}
+.level-cell.selected .level-badge{border-color:currentColor;}
+.level-cell.selected .level-badge::before{content:'\2713  ';font-size:10px;}
+
+.total-section{margin-top:32px;background:var(--navy);border-radius:10px;padding:24px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+.total-left{flex:1;}
+.total-label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#7A8BA8;margin-bottom:6px;}
+.total-score{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;color:white;line-height:1;}
+.total-denom{font-size:20px;color:#7A8BA8;}
+.total-bar-wrap{flex:2;min-width:200px;}
+.total-bar-bg{height:6px;background:rgba(255,255,255,.12);border-radius:3px;overflow:hidden;margin-bottom:12px;}
+.total-bar-fill{height:100%;border-radius:3px;background:var(--teal);transition:width .4s cubic-bezier(.4,0,.2,1);width:0%;}
+.grade-badge-large{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;background:rgba(255,255,255,.08);color:white;padding:8px 22px;border-radius:8px;}
+.grade-scale{display:flex;gap:6px;flex-wrap:wrap;}
+.gs-item{font-size:11px;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.07);color:#AAB4C8;}
+.gs-item.active{background:var(--teal);color:white;}
+
+.gs-editor{display:none;margin-top:20px;background:rgba(255,255,255,.05);border-radius:8px;padding:14px 18px;}
+body.edit-mode .gs-editor{display:block;}
+.gs-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.gs-inp{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:5px;color:white;font-family:'DM Sans',sans-serif;font-size:12px;padding:4px 8px;}
+.gs-inp-grade{width:44px;text-align:center;font-weight:500;}
+.gs-inp-min{width:52px;text-align:center;}
+.gs-inp-label{width:120px;}
+.gs-row-del{background:none;border:none;cursor:pointer;color:rgba(255,100,100,.6);font-size:14px;padding:2px 4px;}
+
+.add-dim-btn{display:none;width:100%;margin-top:12px;border:2px dashed var(--border);background:transparent;border-radius:10px;padding:16px;color:var(--slate);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+body.edit-mode .add-dim-btn{display:block;}
+.weight-warning{display:none;font-size:11px;color:var(--red);padding:6px 12px;background:var(--red-lt);border-radius:6px;margin-bottom:12px;}
+.weight-warning.show{display:block;}
+.feedback-section{margin-top:20px;}
+.feedback-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);margin-bottom:6px;display:block;}
+.feedback-box{width:100%;border:1px solid var(--border);border-radius:8px;background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);padding:12px 14px;resize:vertical;min-height:70px;}
+
+/* Analytics & Radar Chart Styles */
+.analytics-header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--navy); padding-bottom: 20px;}
+.stat-card-row { display: flex; gap: 20px; margin-bottom: 30px;}
+.stat-card { flex: 1; background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; box-shadow:0 4px 12px rgba(28,43,74,.05); }
+.stat-val { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 600; color: var(--teal); line-height: 1; margin-bottom: 8px;}
+.stat-lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--slate); }
+.chart-container { background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 30px;}
+.chart-title { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;}
+.chart-row { display: flex; align-items: center; margin-bottom: 16px;}
+.chart-label { width: 300px; font-size: 13px; font-weight: 500; color: var(--navy); padding-right: 16px;}
+.chart-bar-wrap { flex: 1; background: var(--border); height: 12px; border-radius: 6px; overflow: hidden;}
+.chart-bar-fill { height: 100%; background: var(--gold); border-radius: 6px;}
+.chart-score { width: 50px; text-align: right; font-size: 13px; font-weight: 600; color: var(--slate); }
+
+.history-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align:left;}
+.history-table th { padding: 12px; background: var(--navy); color: white; font-weight: 500;}
+.history-table td { padding: 12px; border-bottom: 1px solid var(--border); color: var(--navy);}
+.action-link { color: var(--gold); cursor: pointer; font-weight: 500; margin-right:12px; text-decoration:none;}
+.action-link.del { color: var(--red); }
+
+/* Modal Radar Enhancements */
+.modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(28,43,74,0.8); z-index:999; justify-content:center; align-items:center;}
+.modal-content { background:var(--paper); padding:30px; border-radius:12px; max-width:650px; width:100%; position:relative; display:flex; flex-direction:column; max-height: 90vh;}
+.close-btn { position:absolute; top:20px; right:20px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate);}
+.radar-identity { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; font-size: 13px; color: var(--slate); }
+.radar-id-item strong { color: var(--navy); }
+.radar-legend { display:flex; gap:16px; justify-content:center; margin-top:10px; font-size:12px; color:var(--slate);}
+.legend-item { display:flex; align-items:center; gap:6px;}
+.legend-color { width:12px; height:12px; border-radius:3px;}
+.radar-feedback-section { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); text-align: left; }
+.radar-feedback-title { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--slate); margin-bottom: 8px; }
+.radar-feedback-text { font-size: 13px; color: var(--navy); background: var(--cream); padding: 12px; border-radius: 6px; white-space: pre-wrap; line-height: 1.5; max-height: 120px; overflow-y: auto;}
+
+@media print{.toolbar,.edit-toolbar,.gs-editor,.level-edit-bar,.add-dim-btn,.dim-remove{display:none!important;}.page{padding:24px;}}
+</style>
+</head>
+<body class="score-mode">
+
+<div class="toolbar">
+  <div class="toolbar-title">
+    Pro-Rubric Evaluator
+    <span class="draft-badge" id="draftBadge">Unsaved Draft</span>
+  </div>
+  <span id="modeBadge" class="mode-badge mode-score">Score mode</span>
+  <button class="btn btn-ghost" id="toggleBtn" onclick="toggleMode()">✏️ Edit template</button>
+  <button class="btn btn-ghost" onclick="resetScores()">↺ Reset Form</button>
+  <button class="btn btn-ghost" onclick="saveEvaluation()">💾 Save to Cohort</button>
+  <button class="btn btn-ghost" onclick="toggleAnalytics()">📊 Analytics</button>
+  <button class="btn btn-gold" onclick="copySummary()">Copy summary</button>
+  <button class="btn btn-teal" onclick="window.print()">Print / PDF</button>
+</div>
+
+<div class="edit-toolbar">
+    <span style="color:white; font-size:13px; font-weight:500;">Data Template JSON:</span>
+    <button class="btn btn-teal btn-sm" onclick="exportJSON()">📥 Download</button>
+    <button class="btn btn-gold btn-sm" onclick="document.getElementById('importFile').click()">📤 Import</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+</div>
+
+<div class="page" id="gradingView">
+  <div class="rubric-header">
+    <div class="header-top">
+      <div class="header-left">
+        <div class="tag-row">
+          <span class="tag" id="tagCourse" contenteditable="false" onblur="saveDraft()">Sistem Rekayasa & Evaluasi</span>
+          <span class="edit-hint">← click any text to edit</span>
+        </div>
+        <div class="rubric-title" id="rubricTitle" contenteditable="false" onblur="saveDraft()">Sidang Metodologi Sistem</div>
+        <div class="rubric-course" id="rubricCourse" contenteditable="false" onblur="saveDraft()">University Assignment Rubric</div>
+        <div class="rubric-desc" id="rubricDesc" contenteditable="false" onblur="saveDraft()">Penilaian kemampuan merumuskan, memodelkan, dan memvalidasi sistem menggunakan pendekatan teknik industri.</div>
+      </div>
+      <div class="header-meta">
+        <div class="field-group"><span class="field-label">Student Name</span><input class="field-input" id="studentName" placeholder="e.g. Budi Santoso" oninput="saveDraft()"/></div>
+        <div class="field-group"><span class="field-label">Student ID / NIM</span><input class="field-input" id="studentId" placeholder="e.g. 2021-IE-045" oninput="saveDraft()"/></div>
+        <div class="field-group"><span class="field-label">Date</span><input class="field-input" id="dateField" type="date" oninput="saveDraft()"/></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="weight-warning" id="weightWarning">⚠️ Bobot kriteria tidak 100% — harap sesuaikan.</div>
+  <div class="dimensions" id="dimContainer"></div>
+  <button class="add-dim-btn" onclick="addDimension()">+ Add dimension</button>
+
+  <div class="feedback-section">
+    <span class="feedback-label">Feedback / notes for student</span>
+    <textarea class="feedback-box" id="feedbackBox" placeholder="Write specific gap analysis & feedback here..." oninput="saveDraft()"></textarea>
+  </div>
+
+  <div class="total-section">
+    <div class="total-left">
+      <div class="total-label">Total weighted score</div>
+      <div class="total-score"><span id="totalDisplay">—</span><span class="total-denom"> / 100</span></div>
+      <div class="total-note" id="totalNote"></div>
+    </div>
+    <div class="total-bar-wrap">
+      <div class="total-bar-bg"><div class="total-bar-fill" id="totalBar"></div></div>
+      <div class="grade-scale" id="gradeScaleDisplay"></div>
+      <div class="gs-editor">
+        <div class="gs-editor-title">Edit grade scale</div>
+        <div id="gsEditorRows"></div>
+        <button class="gs-add-btn" onclick="addGradeRow()">+ Add grade</button>
+      </div>
+    </div>
+    <div class="grade-badge-large" id="gradeBadge">—</div>
+  </div>
+</div>
+
+<div class="page" id="analyticsView" style="display:none;">
+    <div class="analytics-header">
+        <div>
+            <div class="rubric-title">Cohort Analytics</div>
+            <div class="rubric-course" id="analyticsCourseTitle">Aggregated evaluation data</div>
+        </div>
+        <div style="display:flex; gap: 8px;">
+            <button class="btn btn-ghost" style="color: var(--navy); border-color: var(--border);" onclick="toggleAnalytics()">← Back to Grading</button>
+            <button class="btn btn-gold" onclick="exportCSV()">Export CSV</button>
+            <button class="btn btn-ghost" style="color: var(--red); border-color: rgba(176,58,46,.3);" onclick="clearAllHistory()">Clear All Data</button>
+        </div>
+    </div>
+
+    <div class="stat-card-row">
+        <div class="stat-card">
+            <div class="stat-val" id="statTotalStudents">0</div>
+            <div class="stat-lbl">Students Evaluated</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-val" id="statAvgScore">0.0</div>
+            <div class="stat-lbl">Cohort Average</div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-title">Dimension Averages (Bottleneck Analysis)</div>
+        <div id="chartContainer"></div>
+    </div>
+
+    <div class="chart-container" style="padding: 0; overflow: hidden;">
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Student Name</th>
+                    <th>ID / NIM</th>
+                    <th>Score</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="historyTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal-overlay" id="radarModal">
+    <div class="modal-content">
+        <button class="close-btn" onclick="document.getElementById('radarModal').style.display='none'">✕</button>
+        <div class="chart-title" style="display:block;">Gap Analysis</div>
+        
+        <div class="radar-identity">
+            <div class="radar-id-item"><strong>Name:</strong> <span id="radarStudentName">-</span></div>
+            <div class="radar-id-item"><strong>ID/NIM:</strong> <span id="radarStudentId">-</span></div>
+            <div class="radar-id-item"><strong>Date:</strong> <span id="radarStudentDate">-</span></div>
+            <div class="radar-id-item"><strong>Total Score:</strong> <span id="radarStudentScore">-</span> / 100</div>
+        </div>
+
+        <div style="text-align:center; padding: 10px 0;" id="radarSvgContainer">
+            </div>
+        
+        <div class="radar-legend">
+            <div class="legend-item"><div class="legend-color" style="background:var(--gold);"></div> Student Score</div>
+            <div class="legend-item"><div class="legend-color" style="background:rgba(42,123,111,0.3);"></div> Cohort Average</div>
+        </div>
+
+        <div class="radar-feedback-section">
+            <div class="radar-feedback-title">Feedback & Notes</div>
+            <div class="radar-feedback-text" id="radarFeedbackText">No feedback provided.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── Rank colour system ──────────────────
+var RANK_PALETTE=[
+  {bg:"#DDF0EC",fg:"#1A5C52",sBg:"#1A5C52",sBadge:"#0F3D36",sText:"#E0FBF4",sMuted:"#9FD9CA"},
+  {bg:"#E3EDFA",fg:"#1A3A6E",sBg:"#1A3A6E",sBadge:"#0F2448",sText:"#E0EEFF",sMuted:"#9AB8E8"},
+  {bg:"#EDE8FA",fg:"#3A1F6E",sBg:"#3A1F6E",sBadge:"#26144A",sText:"#EAE0FF",sMuted:"#B8A0E8"},
+  {bg:"#FEF3E2",fg:"#7A4A10",sBg:"#7A4A10",sBadge:"#4F2E08",sText:"#FFF0D0",sMuted:"#E8B870"},
+  {bg:"#FDE8DC",fg:"#7A2E10",sBg:"#7A2E10",sBadge:"#4F1E08",sText:"#FFE4D0",sMuted:"#E89060"},
+  {bg:"#FAEAEA",fg:"#7A1F1F",sBg:"#7A1F1F",sBadge:"#500F0F",sText:"#FFE0E0",sMuted:"#E89090"}
+];
+function rankColor(rank,total){
+  var idx=total<=1?0:Math.round(rank/(total-1)*(RANK_PALETTE.length-1));
+  return RANK_PALETTE[Math.min(idx,RANK_PALETTE.length-1)];
+}
+
+// ── Default Data ────────────────────────────────────────────────────────────
+var rubric={
+  gradeScale:[
+    {grade:"A",min:85,label:"Sangat Baik"},
+    {grade:"A-",min:80,label:"Baik"},
+    {grade:"B+",min:75,label:"Cukup Baik"},
+    {grade:"B",min:70,label:"Cukup"},
+    {grade:"C",min:60, label:"Perlu Perbaikan"}
+  ],
+  dimensions:[
+    {id:1,name:"Formulasi Masalah & Teori",weight:30,priority:"high",levels:[
+      {score:4,label:"Istimewa",    desc:"Definisi masalah sangat presisi, ditunjang landasan teori sistem yang kuat."},
+      {score:3,label:"Baik",        desc:"Masalah jelas dan teori mendukung, namun kurang tajam dalam justifikasi."},
+      {score:2,label:"Cukup",       desc:"Rumusan masalah standar, koneksi dengan teori agak lemah."},
+      {score:1,label:"Kurang",      desc:"Masalah kabur dan landasan teori tidak relevan."}
+    ]},
+    {id:2,name:"Validasi Model Simulasi",weight:40,priority:"high",levels:[
+      {score:4,label:"Istimewa",    desc:"Validasi data struktural dan operasional sempurna tanpa error."},
+      {score:3,label:"Baik",        desc:"Model tervalidasi dengan baik, terdapat asumsi minor yang terabaikan."},
+      {score:2,label:"Cukup",       desc:"Metode validasi parsial, beberapa skenario tidak diuji."},
+      {score:1,label:"Kurang",      desc:"Tidak ada validasi yang jelas pada model yang dibangun."}
+    ]},
+    {id:3,name:"Sistematika Penyampaian",weight:30,priority:"medium",levels:[
+      {score:4,label:"Istimewa",    desc:"Alur presentasi sangat logis, tepat waktu, artikulasi jelas."},
+      {score:3,label:"Baik",        desc:"Penyampaian runtut meski ada pengulangan atau jeda minor."},
+      {score:2,label:"Cukup",       desc:"Struktur agak melompat-lompat, manajemen waktu kurang baik."},
+      {score:1,label:"Kurang",      desc:"Penjelasan membingungkan dan sulit diikuti."}
+    ]}
+  ]
+};
+
+var scores={}, nextId=10, editMode=false;
+var PRIORITIES=["high","medium","low"];
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+// ── DRAFT (AUTO-SAVE) SYSTEM ────────────────────────────────────────────────
+function saveDraft() {
+    if(editMode) return;
+    var draft = {
+        scores: scores,
+        name: document.getElementById("studentName").value,
+        id: document.getElementById("studentId").value,
+        date: document.getElementById("dateField").value,
+        feedback: document.getElementById("feedbackBox").value
+    };
+    sessionStorage.setItem("rubricDraft", JSON.stringify(draft));
+    document.getElementById("draftBadge").style.display = "inline-block";
+}
+
+function loadDraft() {
+    var draftStr = sessionStorage.getItem("rubricDraft");
+    if(draftStr) {
+        var draft = JSON.parse(draftStr);
+        scores = draft.scores || {};
+        if(draft.name) document.getElementById("studentName").value = draft.name;
+        if(draft.id) document.getElementById("studentId").value = draft.id;
+        if(draft.date) document.getElementById("dateField").value = draft.date;
+        if(draft.feedback) document.getElementById("feedbackBox").value = draft.feedback;
+        document.getElementById("draftBadge").style.display = "inline-block";
+    } else {
+        document.getElementById("dateField").value=new Date().toISOString().split("T")[0];
+    }
+}
+
+function clearDraft() {
+    sessionStorage.removeItem("rubricDraft");
+    document.getElementById("draftBadge").style.display = "none";
+}
+
+// ── JSON IMPORT / EXPORT ────────────────────────────────────────────────────
+function exportJSON() {
+    var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rubric, null, 2));
+    var dlAnchorElem = document.createElement('a');
+    dlAnchorElem.setAttribute("href", dataStr);
+    dlAnchorElem.setAttribute("download", "Rubric_Template.json");
+    dlAnchorElem.click();
+}
+
+function importJSON(event) {
+    var file = event.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            var imported = JSON.parse(e.target.result);
+            if(imported.dimensions && imported.gradeScale) {
+                rubric = imported;
+                scores = {}; 
+                render();
+                alert("Template berhasil dimuat!");
+            } else {
+                alert("Format JSON tidak valid untuk aplikasi ini.");
+            }
+        } catch(err) {
+            alert("Terjadi kesalahan membaca file JSON.");
+        }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+}
+
+// ── RENDER CORE ─────────────────────────────────────────────────────────────
+function render(){
+  var c=document.getElementById("dimContainer");
+  c.innerHTML="";
+  rubric.dimensions.forEach(function(dim,i){c.appendChild(buildCard(dim,i));});
+  renderGradeScaleDisplay();
+  renderGsEditor();
+  updateTotal();
+  checkWeights();
+  if(editMode) applyEditableState(true);
+}
+
+function buildCard(dim,idx){
+  var card=document.createElement("div");
+  card.className="dim-card priority-"+dim.priority;
+  card.dataset.id=dim.id;
+
+  var sorted=dim.levels.slice().sort(function(a,b){return b.score-a.score;});
+  var n=sorted.length;
+  var maxS=n?sorted[0].score:4;
+
+  var levHtml=sorted.map(function(lvl,rank){
+    var c=rankColor(rank,n);
+    var isSel=scores[dim.id]===lvl.score;
+    var cellStyle=isSel?"background:"+c.sBg+";color:"+c.sText+";":"background:"+c.bg+";";
+    var badgeStyle=isSel?"background:"+c.sBadge+";color:"+c.sMuted+";border-color:"+c.sBadge+";":"background:"+c.bg+";color:"+c.fg+";";
+    var labelStyle=isSel?"color:"+c.sText+";":"color:var(--navy);";
+    var descStyle=isSel?"color:"+c.sMuted+";":"color:var(--slate);";
+    return '<div class="level-cell'+(isSel?" selected":"")
+      +'" style="'+cellStyle+'" onclick="selectScore('+dim.id+','+lvl.score+')" data-dim="'+dim.id+'">'
+      +'<span class="level-badge" style="'+badgeStyle+'">'
+      +'<span class="level-score-dot"></span>'+lvl.score+'/'+maxS+'</span>'
+      +'<span class="level-label" style="'+labelStyle+'" contenteditable="false" onblur="updateLevelLabel('+dim.id+','+lvl.score+',this.textContent)">'+esc(lvl.label)+'</span>'
+      +'<span class="level-desc" style="'+descStyle+'" contenteditable="false" onblur="updateLevelDesc('+dim.id+','+lvl.score+',this.textContent)">'+esc(lvl.desc)+'</span>'
+      +'<div class="level-edit-bar">'
+      +'<button class="lev-btn" onclick="event.stopPropagation();addLevel('+dim.id+','+lvl.score+',\'after\')">+ after</button>'
+      +'<button class="lev-btn" onclick="event.stopPropagation();addLevel('+dim.id+','+lvl.score+',\'before\')">+ before</button>'
+      +(n>1?'<button class="lev-btn lev-btn-del" onclick="event.stopPropagation();removeLevel('+dim.id+','+lvl.score+')">remove</button>':'')
+      +'</div></div>';
+  }).join("");
+
+  card.innerHTML='<div class="dim-header">'
+    +'<span class="dim-number">'+String(idx+1).padStart(2,"0")+'</span>'
+    +'<div class="dim-name-wrap"><div class="dim-name" contenteditable="false" onblur="updateDimName('+dim.id+',this.textContent)">'+esc(dim.name)+'</div></div>'
+    +'<button class="dim-priority-badge" onclick="cyclePriority('+dim.id+')">'+dim.priority.toUpperCase()+'</button>'
+    +'<span class="dim-weight">'+dim.weight+'%</span>'
+    +'<input class="dim-weight-input" type="number" min="1" max="100" value="'+dim.weight+'" onchange="updateDimWeight('+dim.id+',this.value)"/>'
+    +'<button class="dim-remove" onclick="removeDimension('+dim.id+')">✕</button></div>'
+    +'<div class="levels-grid" style="grid-template-columns:repeat('+n+',1fr);">'+levHtml+'</div>';
+  return card;
+}
+
+function addLevel(d,r,p){ var dim=rubric.dimensions.find(x=>x.id===d); var sorted=dim.levels.sort((a,b)=>b.score-a.score); var idx=sorted.findIndex(x=>x.score===r); sorted.splice(p==='after'?idx+1:idx,0,{score:0,label:"New",desc:"Desc"}); var n=sorted.length; sorted.forEach((l,i)=>l.score=n-i); dim.levels=sorted; delete scores[d]; render();}
+function removeLevel(d,s){ var dim=rubric.dimensions.find(x=>x.id===d); if(dim.levels.length<=2)return; dim.levels=dim.levels.filter(x=>x.score!==s); var sorted=dim.levels.sort((a,b)=>b.score-a.score); var n=sorted.length; sorted.forEach((l,i)=>l.score=n-i); if(scores[d]===s) delete scores[d]; render();}
+function renderGradeScaleDisplay(){var t=calcTotal(),c=isComplete(); var s=rubric.gradeScale.slice().sort((a,b)=>b.min-a.min); var a=c?s.find(g=>t>=g.min):null; document.getElementById("gradeScaleDisplay").innerHTML=s.map(g=>'<span class="gs-item'+(a&&a.grade===g.grade?" active":"")+'">'+esc(g.grade)+' &ge; '+g.min+' &mdash; '+esc(g.label)+'</span>').join("");}
+function renderGsEditor(){var s=rubric.gradeScale.slice().sort((a,b)=>b.min-a.min); document.getElementById("gsEditorRows").innerHTML=s.map(g=>'<div class="gs-row"><input class="gs-inp gs-inp-grade" value="'+esc(g.grade)+'" onchange="updateGrade(\''+esc(g.grade)+'\',\'grade\',this.value)"/><input class="gs-inp gs-inp-min" type="number" value="'+g.min+'" onchange="updateGrade(\''+esc(g.grade)+'\',\'min\',this.value)"/><input class="gs-inp gs-inp-label" value="'+esc(g.label)+'" onchange="updateGrade(\''+esc(g.grade)+'\',\'label\',this.value)"/>'+(s.length>1?'<button class="gs-row-del" onclick="removeGrade(\''+esc(g.grade)+'\')">✕</button>':'')+'</div>').join("");}
+function updateGrade(o,f,v){var g=rubric.gradeScale.find(x=>x.grade===o); if(f==='min')g.min=parseFloat(v)||0; else if(f==='grade')g.grade=v.trim(); else g.label=v.trim(); renderGradeScaleDisplay(); updateTotal();}
+function removeGrade(g){rubric.gradeScale=rubric.gradeScale.filter(x=>x.grade!==g); renderGsEditor(); renderGradeScaleDisplay(); updateTotal();}
+function addGradeRow(){rubric.gradeScale.push({grade:"?",min:0,label:"New"}); renderGsEditor(); renderGradeScaleDisplay();}
+
+function selectScore(dimId,score){
+  if(editMode)return;
+  scores[dimId]=scores[dimId]===score?undefined:score;
+  render(); 
+  saveDraft(); 
+}
+
+function calcTotal(){var t=0; rubric.dimensions.forEach(d=>{if(scores[d.id]!==undefined){var mx=Math.max(...d.levels.map(l=>l.score)); t+=(scores[d.id]/mx)*d.weight;}}); return t;}
+function isComplete(){return rubric.dimensions.every(d=>scores[d.id]!==undefined);}
+function updateTotal(){
+  var t=calcTotal(),c=isComplete(), sc=rubric.dimensions.filter(d=>scores[d.id]!==undefined).length;
+  if(sc===0){document.getElementById("totalDisplay").textContent="—"; document.getElementById("totalBar").style.width="0%"; document.getElementById("gradeBadge").textContent="—"; document.getElementById("totalNote").textContent=""; return;}
+  document.getElementById("totalDisplay").textContent=t.toFixed(1)+(c?"":"*"); document.getElementById("totalBar").style.width=Math.min(t,100)+"%"; document.getElementById("totalBar").style.background=t>=80?"#2A7B6F":t>=65?"#3A7BC8":t>=50?"#B5863A":"#B03A2E";
+  if(c){var g=rubric.gradeScale.slice().sort((a,b)=>b.min-a.min).find(x=>t>=x.min); document.getElementById("gradeBadge").textContent=g?g.grade+" \u2014 "+g.label:"—"; document.getElementById("totalNote").textContent="";}
+  else{document.getElementById("gradeBadge").textContent="—"; document.getElementById("totalNote").textContent=sc+" of "+rubric.dimensions.length+" scored";}
+}
+
+function resetScores(){
+    scores={};
+    document.getElementById("studentName").value="";
+    document.getElementById("studentId").value="";
+    document.getElementById("feedbackBox").value="";
+    clearDraft();
+    render();
+}
+
+function applyEditableState(on){
+  ["rubricTitle","rubricCourse","rubricDesc","tagCourse"].forEach(id=>{var e=document.getElementById(id);if(e)e.contentEditable=on?"true":"false";});
+  document.querySelectorAll(".dim-name,.level-label,.level-desc").forEach(e=>e.contentEditable=on?"true":"false");
+}
+
+function toggleMode(){
+  editMode=!editMode;
+  document.body.className=editMode?"edit-mode":"score-mode";
+  document.getElementById("modeBadge").className="mode-badge "+(editMode?"mode-edit":"mode-score");
+  document.getElementById("modeBadge").textContent=editMode?"Edit mode":"Score mode";
+  document.getElementById("toggleBtn").textContent=editMode?"\u2713 Done editing":"\u270F\uFE0F Edit template";
+  applyEditableState(editMode);
+}
+
+function updateDimName(id,val){var d=rubric.dimensions.find(x=>x.id===id);if(d)d.name=val.trim();}
+function updateDimWeight(id,val){var d=rubric.dimensions.find(x=>x.id===id);if(d){d.weight=parseFloat(val)||0;checkWeights();updateTotal();}}
+function updateLevelLabel(dId,s,v){var d=rubric.dimensions.find(x=>x.id===dId);if(d){var l=d.levels.find(x=>x.score===s);if(l)l.label=v.trim();}}
+function updateLevelDesc(dId,s,v){var d=rubric.dimensions.find(x=>x.id===dId);if(d){var l=d.levels.find(x=>x.score===s);if(l)l.desc=v.trim();}}
+function cyclePriority(id){if(!editMode)return; var d=rubric.dimensions.find(x=>x.id===id); if(d){d.priority=PRIORITIES[(PRIORITIES.indexOf(d.priority)+1)%PRIORITIES.length]; render();}}
+function addDimension(){rubric.dimensions.push({id:nextId++,name:"New dim",weight:10,priority:"medium",levels:[{score:4,label:"L4",desc:""},{score:3,label:"L3",desc:""},{score:2,label:"L2",desc:""},{score:1,label:"L1",desc:""}]}); render();}
+function removeDimension(id){if(rubric.dimensions.length<=1)return; rubric.dimensions=rubric.dimensions.filter(x=>x.id!==id); delete scores[id]; render();}
+function checkWeights(){var t=rubric.dimensions.reduce((s,d)=>s+d.weight,0); document.getElementById("weightWarning").classList.toggle("show",Math.abs(t-100)>0.5);}
+
+function copySummary(){
+  var lines=["ASSESSMENT SUMMARY \u2014 "+document.getElementById("rubricTitle").textContent,
+             "Student: "+(document.getElementById("studentName").value||"N/A")+"  |  ID: "+(document.getElementById("studentId").value||"N/A")+"\n"];
+  rubric.dimensions.forEach(d=>{
+    var s=scores[d.id], mx=Math.max(...d.levels.map(l=>l.score)), lvl=s!==undefined?d.levels.find(l=>l.score===s):null;
+    lines.push("  "+(d.name.length>40?d.name.substring(0,38)+"...":d.name).padEnd(42)+(lvl?lvl.label:"\u2014").padEnd(15)+(s!==undefined?((s/mx)*d.weight).toFixed(1):"\u2014")+"/"+d.weight);
+  });
+  var t=calcTotal(),g=isComplete()?rubric.gradeScale.slice().sort((a,b)=>b.min-a.min).find(x=>t>=x.min):null;
+  lines.push("\u2500".repeat(54), "  TOTAL".padEnd(44)+(g?g.grade:"-")+"  "+t.toFixed(1)+"/100\n", "Feedback:\n"+document.getElementById("feedbackBox").value.trim());
+  navigator.clipboard.writeText(lines.join("\n")).then(()=>alert("Copied!")).catch(()=>prompt("Copy this:",lines.join("\n")));
+}
+
+// ── COHORT & ANALYTICS DENGAN FEEDBACK ──────────────────────────────────────
+function getHistory() { return JSON.parse(localStorage.getItem("rubricHistory") || "[]"); }
+function saveHistory(arr) { localStorage.setItem("rubricHistory", JSON.stringify(arr)); }
+
+function saveEvaluation() {
+    if (!isComplete()) { alert("Lengkapi penilaian sebelum menyimpan."); return; }
+    var history = getHistory();
+    history.push({
+        name: document.getElementById("studentName").value || "Student " + (history.length + 1),
+        id: document.getElementById("studentId").value || "N/A",
+        date: document.getElementById("dateField").value,
+        total: parseFloat(calcTotal().toFixed(2)),
+        scores: Object.assign({}, scores),
+        feedback: document.getElementById("feedbackBox").value.trim() 
+    });
+    saveHistory(history);
+    clearDraft();
+    alert("Data tersimpan ke Cohort Analytics!");
+    resetScores();
+}
+
+function deleteHistoryRecord(index) {
+    if(confirm("Yakin ingin menghapus nilai mahasiswa ini?")) {
+        var history = getHistory();
+        history.splice(index, 1);
+        saveHistory(history);
+        renderAnalytics(); 
+    }
+}
+
+function toggleAnalytics() {
+    var isScore = document.getElementById("gradingView").style.display !== "none";
+    document.getElementById("gradingView").style.display = isScore ? "none" : "block";
+    document.getElementById("analyticsView").style.display = isScore ? "block" : "none";
+    if(isScore) renderAnalytics();
+}
+
+function calculateAverages(history) {
+    var totals = {}, counts = {};
+    history.forEach(r => {
+        Object.keys(r.scores).forEach(dId => {
+            totals[dId] = (totals[dId] || 0) + r.scores[dId];
+            counts[dId] = (counts[dId] || 0) + 1;
+        });
+    });
+    var averages = {};
+    Object.keys(totals).forEach(dId => averages[dId] = totals[dId] / counts[dId]);
+    return averages;
+}
+
+function renderAnalytics() {
+    var history = getHistory();
+    document.getElementById("statTotalStudents").textContent = history.length;
+    
+    if (history.length === 0) {
+        document.getElementById("statAvgScore").textContent = "0.0";
+        document.getElementById("chartContainer").innerHTML = "<p style='color:var(--slate); font-size:13px;'>Belum ada data.</p>";
+        document.getElementById("historyTableBody").innerHTML = "";
+        return;
+    }
+
+    document.getElementById("statAvgScore").textContent = (history.reduce((s,r)=>s+r.total,0)/history.length).toFixed(1);
+    var averages = calculateAverages(history);
+    
+    var chartHtml = "";
+    rubric.dimensions.forEach(dim => {
+        var avg = averages[dim.id] || 0;
+        var mx = Math.max(...dim.levels.map(l=>l.score));
+        var pct = mx>0 ? (avg/mx)*100 : 0;
+        var col = pct>=75 ? "var(--teal)" : pct>=50 ? "var(--gold)" : "var(--red)";
+        chartHtml += `<div class="chart-row"><div class="chart-label">${esc(dim.name)}</div><div class="chart-bar-wrap"><div class="chart-bar-fill" style="width:${pct}%; background:${col};"></div></div><div class="chart-score">${avg.toFixed(1)}/${mx}</div></div>`;
+    });
+    document.getElementById("chartContainer").innerHTML = chartHtml;
+
+    document.getElementById("historyTableBody").innerHTML = history.map((r,i) => 
+        `<tr>
+            <td>${esc(r.date)}</td><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td style="font-weight:600;">${r.total.toFixed(1)}</td>
+            <td>
+                <a class="action-link" onclick="openRadar(${i})">Radar Gap</a>
+                <a class="action-link del" onclick="deleteHistoryRecord(${i})">Hapus</a>
+            </td>
+        </tr>`
+    ).join("");
+}
+
+// ── SVG RADAR CHART GENERATOR DENGAN IDENTITY & FEEDBACK ─────────────────────
+function openRadar(index) {
+    var history = getHistory();
+    var student = history[index];
+    var averages = calculateAverages(history);
+    
+    // Inject Title & Identity
+    document.getElementById("radarStudentName").textContent = student.name;
+    document.getElementById("radarStudentId").textContent = student.id || "N/A";
+    document.getElementById("radarStudentDate").textContent = student.date || "N/A";
+    document.getElementById("radarStudentScore").textContent = student.total ? student.total.toFixed(1) : "0.0";
+
+    // Inject Feedback
+    var feedbackElem = document.getElementById("radarFeedbackText");
+    if (student.feedback && student.feedback.trim() !== "") {
+        feedbackElem.textContent = student.feedback;
+        feedbackElem.style.fontStyle = "normal";
+        feedbackElem.style.color = "var(--navy)";
+    } else {
+        feedbackElem.textContent = "Tidak ada catatan feedback untuk mahasiswa ini.";
+        feedbackElem.style.fontStyle = "italic";
+        feedbackElem.style.color = "var(--slate)";
+    }
+
+    document.getElementById("radarModal").style.display = "flex";
+
+    var size = 300, center = size/2, radius = 100;
+    var dims = rubric.dimensions;
+    var num = dims.length;
+    
+    var svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+    
+    for(var lvl=1; lvl<=4; lvl++) {
+        var r = radius * (lvl/4);
+        var pts = [];
+        for(var i=0; i<num; i++) {
+            var ang = (Math.PI*2*i)/num - Math.PI/2;
+            pts.push(`${center + r*Math.cos(ang)},${center + r*Math.sin(ang)}`);
+        }
+        svg += `<polygon points="${pts.join(' ')}" fill="none" stroke="var(--border)" stroke-width="1"/>`;
+    }
+    
+    dims.forEach((d, i) => {
+        var ang = (Math.PI*2*i)/num - Math.PI/2;
+        var x2 = center + radius*Math.cos(ang), y2 = center + radius*Math.sin(ang);
+        svg += `<line x1="${center}" y1="${center}" x2="${x2}" y2="${y2}" stroke="var(--border)" stroke-width="1"/>`;
+        var lx = center + (radius+25)*Math.cos(ang), ly = center + (radius+15)*Math.sin(ang);
+        var lbl = d.name.length > 15 ? d.name.substring(0,12)+"..." : d.name;
+        svg += `<text x="${lx}" y="${ly}" font-size="10" font-family="DM Sans" text-anchor="middle" fill="var(--slate)">${esc(lbl)}</text>`;
+    });
+
+    var getPoly = function(dataObj) {
+        var pts = [];
+        dims.forEach((d, i) => {
+            var val = dataObj[d.id] || 0;
+            var mx = Math.max(...d.levels.map(l=>l.score));
+            var r = radius * (val/mx);
+            var ang = (Math.PI*2*i)/num - Math.PI/2;
+            pts.push(`${center + r*Math.cos(ang)},${center + r*Math.sin(ang)}`);
+        });
+        return pts.join(' ');
+    };
+
+    svg += `<polygon points="${getPoly(averages)}" fill="var(--teal)" fill-opacity="0.2" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4"/>`;
+    svg += `<polygon points="${getPoly(student.scores)}" fill="var(--gold)" fill-opacity="0.4" stroke="var(--gold)" stroke-width="2"/>`;
+
+    svg += `</svg>`;
+    document.getElementById("radarSvgContainer").innerHTML = svg;
+}
+
+function clearAllHistory() {
+    if(confirm("Hapus SELURUH data angkatan ini?")) { localStorage.removeItem("rubricHistory"); renderAnalytics(); }
+}
+
+function exportCSV() {
+    var history = getHistory();
+    if (!history.length) return alert("Kosong.");
+    
+    var h = ["Date", "Name", "ID", "Total"]; 
+    rubric.dimensions.forEach(d=>h.push(d.name));
+    h.push("Feedback"); 
+    
+    var csv = "data:text/csv;charset=utf-8," + h.join(",") + "\n" + history.map(r => {
+        var row = [r.date, r.name, r.id, r.total];
+        rubric.dimensions.forEach(d => row.push(r.scores[d.id]||0));
+        
+        var cleanFeedback = (r.feedback || "").replace(/"/g, '""').replace(/\n/g, " / ");
+        row.push(cleanFeedback);
+        
+        return row.map(x=>`"${x}"`).join(",");
+    }).join("\n");
+    
+    var a = document.createElement("a"); a.href=encodeURI(csv); a.download="Analytics_with_Feedback.csv"; a.click();
+}
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+loadDraft();
+render();
+</script>
+</body>
+</html>
