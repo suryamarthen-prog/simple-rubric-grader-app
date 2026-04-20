@@ -13,7 +13,7 @@ It eliminates grading fatigue and provides instant visual feedback on student pe
 ## ✨ Key Features
 * **100% Client-Side & Offline:** Built with Vanilla HTML/CSS/JS. No backend, no server, no installation required. Student data privacy is guaranteed as it only uses local browser memory.
 * **Live Grading Interface:** Dynamic slider-based scoring with visual color-coded rank indicators.
-* **JSON Template Engine:** Export and import grading rubrics as `.json` files to instantly switch between different courses or evaluation matrices.
+* **EXCEL Template Engine:** Export and import grading rubrics as `.xlsx` files to instantly switch between different courses or evaluation matrices.
 * **Auto-Save Draft:** Accidentally closed the tab? Your current grading progress and feedback text are automatically saved to `sessionStorage`.
 * **Cohort Analytics:** Save multiple student evaluations to build a localized database (`localStorage`). View class averages, total students evaluated, and identify systemic bottlenecks.
 * **Radar Chart Gap Analysis:** Generate instant SVG spider charts comparing individual student performance against the cohort average. Perfect for 1-on-1 feedback sessions.
