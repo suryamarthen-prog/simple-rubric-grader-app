@@ -84,7 +84,6 @@ body.edit-mode .dim-weight-input{display:inline-block;}
 .dim-remove{display:none;background:none;border:none;cursor:pointer;color:var(--red);font-size:16px;padding:0 4px;line-height:1;opacity:.5;}
 body.edit-mode .dim-remove{display:block;}
 
-/* SIDE SCROLL DRAG & VISUAL SCROLLBAR */
 .levels-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; cursor: grab; user-select: none; }
 .levels-wrapper:active { cursor: grabbing; }
 .levels-wrapper::-webkit-scrollbar { height: 6px; }
@@ -162,7 +161,7 @@ body.edit-mode .add-dim-btn{display:block;}
 .action-link.del { color: var(--red); }
 .action-link.del:hover { background: var(--red-lt); }
 
-/* Modal Radar Enhancements: Two Column Layout */
+/* Modal Radar Enhancements */
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(28,43,74,0.8); z-index:999; justify-content:center; align-items:center;}
 .modal-content { background:var(--paper); padding:30px; border-radius:12px; max-width:850px; width:95%; position:relative; display:flex; flex-direction:row; gap:24px; max-height: 90vh;}
 .modal-col-left { flex: 1; display:flex; flex-direction:column; }
@@ -173,7 +172,6 @@ body.edit-mode .add-dim-btn{display:block;}
 .radar-legend { display:flex; gap:16px; justify-content:center; margin-top:10px; font-size:12px; color:var(--slate);}
 .legend-item { display:flex; align-items:center; gap:6px;}
 .legend-color { width:12px; height:12px; border-radius:3px;}
-
 .qe-group { margin-bottom: 12px; }
 .qe-label { display: block; font-size: 11px; color: var(--navy); font-weight: 500; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
 .qe-select { width: 100%; border: 1px solid var(--border); border-radius: 4px; font-family: 'DM Sans'; font-size: 12px; padding: 6px; background: white; color: var(--navy); outline:none;}
@@ -190,7 +188,7 @@ body.edit-mode .add-dim-btn{display:block;}
     .mode-badge { align-self: flex-start; margin-bottom: 8px;}
     
     .edit-toolbar { flex-direction: column; align-items: stretch; padding: 16px; }
-    .edit-toolbar .btn { width: 100%; }
+    .edit-toolbar .btn { width: 100%; margin-bottom: 4px;}
 
     .header-top { flex-direction: column; }
     .header-meta { align-items: flex-start; width: 100%; margin-top: 16px;}
@@ -206,7 +204,6 @@ body.edit-mode .add-dim-btn{display:block;}
     .modal-content { flex-direction:column; overflow-y:auto; padding: 20px;} 
     .modal-col-right { padding-left:0; border-left:none; border-top:1px solid var(--border); padding-top:20px; margin-top:10px; overflow-y:visible;}
 }
-
 @media print{.toolbar,.edit-toolbar,.gs-editor,.level-edit-bar,.add-dim-btn,.dim-remove{display:none!important;}.page{padding:24px;}}
 </style>
 </head>
@@ -232,9 +229,10 @@ body.edit-mode .add-dim-btn{display:block;}
 </div>
 
 <div class="edit-toolbar">
-    <span style="color:white; font-size:13px; font-weight:500;">Data Template Excel:</span>
+    <span style="color:white; font-size:13px; font-weight:500;">Data Template Settings:</span>
     <button class="btn btn-teal btn-sm" onclick="exportExcelTemplate()">📥 Download Template</button>
     <button class="btn btn-gold btn-sm" onclick="document.getElementById('importExcel').click()">📤 Import Template</button>
+    <button class="btn btn-ghost btn-sm" style="color:#FFAAAA; border-color:rgba(255,100,100,0.3);" onclick="resetTemplate()">🗑️ Reset Template</button>
     <input type="file" id="importExcel" accept=".xlsx, .xls" style="display:none" onchange="importExcelTemplate(event)">
 </div>
 
@@ -243,12 +241,12 @@ body.edit-mode .add-dim-btn{display:block;}
     <div class="header-top">
       <div class="header-left">
         <div class="tag-row">
-          <span class="tag" id="tagCourse" contenteditable="false" onblur="saveDraft()">Sistem Rekayasa & Evaluasi</span>
+          <span class="tag" id="tagCourse" contenteditable="false" onblur="updateHeader('tag', this.textContent)">Sistem Rekayasa & Evaluasi</span>
           <span class="edit-hint">← click any text to edit</span>
         </div>
-        <div class="rubric-title" id="rubricTitle" contenteditable="false" onblur="saveDraft()">Sidang Metodologi Sistem</div>
-        <div class="rubric-course" id="rubricCourse" contenteditable="false" onblur="saveDraft()">University Assignment Rubric</div>
-        <div class="rubric-desc" id="rubricDesc" contenteditable="false" onblur="saveDraft()">Penilaian kemampuan merumuskan, memodelkan, dan memvalidasi sistem menggunakan pendekatan teknik industri.</div>
+        <div class="rubric-title" id="rubricTitle" contenteditable="false" onblur="updateHeader('title', this.textContent)">Sidang Metodologi Sistem</div>
+        <div class="rubric-course" id="rubricCourse" contenteditable="false" onblur="updateHeader('course', this.textContent)">University Assignment Rubric</div>
+        <div class="rubric-desc" id="rubricDesc" contenteditable="false" onblur="updateHeader('desc', this.textContent)">Penilaian kemampuan merumuskan, memodelkan, dan memvalidasi sistem menggunakan pendekatan teknik industri.</div>
       </div>
       <div class="header-meta">
         <div class="field-group"><span class="field-label">Student Name</span><input class="field-input" id="studentName" placeholder="e.g. Budi Santoso" oninput="saveDraft()"/></div>
@@ -334,7 +332,6 @@ body.edit-mode .add-dim-btn{display:block;}
 <div class="modal-overlay" id="radarModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('radarModal').style.display='none'">✕</button>
-        
         <div class="modal-col-left">
             <div class="chart-title" style="display:block;">Review & Gap Analysis</div>
             <div class="radar-identity">
@@ -349,7 +346,6 @@ body.edit-mode .add-dim-btn{display:block;}
                 <div class="legend-item"><div class="legend-color" style="background:rgba(42,123,111,0.3);"></div> Cohort Avg</div>
             </div>
         </div>
-
         <div class="modal-col-right">
             <div class="chart-title" style="font-size: 14px; margin-bottom: 12px; color: var(--slate);">Quick Adjustments</div>
             <div id="radarQuickEditForm"></div>
@@ -374,64 +370,84 @@ function rankColor(rank,total){
   return RANK_PALETTE[Math.min(idx,RANK_PALETTE.length-1)];
 }
 
-var rubric={
-  gradeScale:[
-    {grade:"A",min:85,label:"Sangat Baik"},
-    {grade:"A-",min:80,label:"Baik"},
-    {grade:"B+",min:75,label:"Cukup Baik"},
-    {grade:"B",min:70,label:"Cukup"},
-    {grade:"C",min:60, label:"Perlu Perbaikan"}
+// STRUKTUR TEMPLATE DEFAULT PABRIK
+var defaultRubric = {
+  tag: "Sistem Rekayasa & Evaluasi",
+  title: "Sidang Metodologi Sistem",
+  course: "University Assignment Rubric",
+  desc: "Penilaian kemampuan merumuskan, memodelkan, dan memvalidasi sistem menggunakan pendekatan teknik industri.",
+  gradeScale: [
+    {grade:"A",min:85,label:"Sangat Baik"}, {grade:"A-",min:80,label:"Baik"},
+    {grade:"B+",min:75,label:"Cukup Baik"}, {grade:"B",min:70,label:"Cukup"}, {grade:"C",min:60, label:"Perlu Perbaikan"}
   ],
-  dimensions:[
+  dimensions: [
     {id:1,name:"Formulasi Masalah & Teori",weight:30,priority:"high",levels:[
-      {score:4,label:"Istimewa",    desc:"Definisi masalah sangat presisi, ditunjang landasan teori sistem yang kuat."},
-      {score:3,label:"Baik",        desc:"Masalah jelas dan teori mendukung, namun kurang tajam dalam justifikasi."},
-      {score:2,label:"Cukup",       desc:"Rumusan masalah standar, koneksi dengan teori agak lemah."},
-      {score:1,label:"Kurang",      desc:"Masalah kabur dan landasan teori tidak relevan."}
+      {score:4,label:"Istimewa",desc:"Definisi masalah sangat presisi, ditunjang landasan teori sistem yang kuat."},
+      {score:3,label:"Baik",desc:"Masalah jelas dan teori mendukung, namun kurang tajam dalam justifikasi."},
+      {score:2,label:"Cukup",desc:"Rumusan masalah standar, koneksi dengan teori agak lemah."},
+      {score:1,label:"Kurang",desc:"Masalah kabur dan landasan teori tidak relevan."}
     ]},
     {id:2,name:"Validasi Model Simulasi",weight:40,priority:"high",levels:[
-      {score:4,label:"Istimewa",    desc:"Validasi data struktural dan operasional sempurna tanpa error."},
-      {score:3,label:"Baik",        desc:"Model tervalidasi dengan baik, terdapat asumsi minor yang terabaikan."},
-      {score:2,label:"Cukup",       desc:"Metode validasi parsial, beberapa skenario tidak diuji."},
-      {score:1,label:"Kurang",      desc:"Tidak ada validasi yang jelas pada model yang dibangun."}
+      {score:4,label:"Istimewa",desc:"Validasi data struktural dan operasional sempurna tanpa error."},
+      {score:3,label:"Baik",desc:"Model tervalidasi dengan baik, terdapat asumsi minor yang terabaikan."},
+      {score:2,label:"Cukup",desc:"Metode validasi parsial, beberapa skenario tidak diuji."},
+      {score:1,label:"Kurang",desc:"Tidak ada validasi yang jelas pada model yang dibangun."}
     ]},
     {id:3,name:"Sistematika Penyampaian",weight:30,priority:"medium",levels:[
-      {score:4,label:"Istimewa",    desc:"Alur presentasi sangat logis, tepat waktu, artikulasi jelas."},
-      {score:3,label:"Baik",        desc:"Penyampaian runtut meski ada pengulangan atau jeda minor."},
-      {score:2,label:"Cukup",       desc:"Struktur agak melompat-lompat, manajemen waktu kurang baik."},
-      {score:1,label:"Kurang",      desc:"Penjelasan membingungkan dan sulit diikuti."}
+      {score:4,label:"Istimewa",desc:"Alur presentasi sangat logis, tepat waktu, artikulasi jelas."},
+      {score:3,label:"Baik",desc:"Penyampaian runtut meski ada pengulangan atau jeda minor."},
+      {score:2,label:"Cukup",desc:"Struktur agak melompat-lompat, manajemen waktu kurang baik."},
+      {score:1,label:"Kurang",desc:"Penjelasan membingungkan dan sulit diikuti."}
     ]}
   ]
 };
 
+// LOAD TEMPLATE DARI MEMORI LOKAL JIKA ADA
+var rubric = JSON.parse(localStorage.getItem("savedRubricTemplate")) || JSON.parse(JSON.stringify(defaultRubric));
 var scores={}, nextId=10, editMode=false;
 var PRIORITIES=["high","medium","low"];
-var currentRadarIndex = -1;
-var currentRadarScores = {};
-var currentCohortAverages = {};
+var currentRadarIndex = -1, currentRadarScores = {}, currentCohortAverages = {};
 var isDraggingGrid = false;
 
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-
 function toggleMenu() { document.getElementById("toolbarActions").classList.toggle("show"); }
+
+// SISTEM PENYIMPANAN TEMPLATE (PERSISTENCE)
+function saveTemplate() {
+    localStorage.setItem("savedRubricTemplate", JSON.stringify(rubric));
+}
+function updateHeader(key, val) {
+    rubric[key] = val.trim();
+    saveTemplate();
+}
+function initHeaders() {
+    document.getElementById("tagCourse").textContent = rubric.tag || "Course Tag";
+    document.getElementById("rubricTitle").textContent = rubric.title || "Rubric Title";
+    document.getElementById("rubricCourse").textContent = rubric.course || "Course Name";
+    document.getElementById("rubricDesc").textContent = rubric.desc || "Description";
+}
+function resetTemplate() {
+    if(confirm("Kembalikan template ke pengaturan awal (default)? Semua kriteria yang kamu buat akan hilang.")) {
+        localStorage.removeItem("savedRubricTemplate");
+        rubric = JSON.parse(JSON.stringify(defaultRubric));
+        scores = {};
+        clearDraft();
+        initHeaders();
+        render();
+    }
+}
 
 function saveDraft() {
     if(editMode) return;
-    var draft = {
-        scores: scores, name: document.getElementById("studentName").value,
-        id: document.getElementById("studentId").value, date: document.getElementById("dateField").value,
-        feedback: document.getElementById("feedbackBox").value
-    };
+    var draft = { scores: scores, name: document.getElementById("studentName").value, id: document.getElementById("studentId").value, date: document.getElementById("dateField").value, feedback: document.getElementById("feedbackBox").value };
     sessionStorage.setItem("rubricDraft", JSON.stringify(draft));
     var badge = document.getElementById("draftBadge");
     badge.textContent = "Unsaved Draft"; badge.style.display = "inline-block";
 }
-
 function loadDraft() {
     var draftStr = sessionStorage.getItem("rubricDraft");
     if(draftStr) {
-        var draft = JSON.parse(draftStr);
-        scores = draft.scores || {};
+        var draft = JSON.parse(draftStr); scores = draft.scores || {};
         if(draft.name) document.getElementById("studentName").value = draft.name;
         if(draft.id) document.getElementById("studentId").value = draft.id;
         if(draft.date) document.getElementById("dateField").value = draft.date;
@@ -439,7 +455,6 @@ function loadDraft() {
         document.getElementById("draftBadge").style.display = "inline-block";
     } else { document.getElementById("dateField").value=new Date().toISOString().split("T")[0]; }
 }
-
 function clearDraft() { sessionStorage.removeItem("rubricDraft"); document.getElementById("draftBadge").style.display = "none"; }
 
 function exportExcelTemplate() {
@@ -457,7 +472,7 @@ function importExcelTemplate(event) {
         var data = new Uint8Array(e.target.result);
         try {
             var wb = XLSX.read(data, {type: 'array'});
-            var newRubric = { dimensions: [], gradeScale: [] };
+            var newRubric = { tag: rubric.tag, title: rubric.title, course: rubric.course, desc: rubric.desc, dimensions: [], gradeScale: [] };
             if(wb.Sheets["GradeScale"]) {
                 var gsData = XLSX.utils.sheet_to_json(wb.Sheets["GradeScale"]);
                 newRubric.gradeScale = gsData.map(r => ({grade: String(r["Grade"]), min: Number(r["Min Score"]), label: String(r["Label"])}));
@@ -472,32 +487,29 @@ function importExcelTemplate(event) {
                 });
                 newRubric.dimensions = Object.values(dimMap);
             }
-            if(newRubric.dimensions.length > 0) { rubric = newRubric; scores = {}; render(); alert("Template Excel berhasil dimuat!"); } 
+            if(newRubric.dimensions.length > 0) { rubric = newRubric; scores = {}; saveTemplate(); render(); alert("Template Excel berhasil dimuat!"); } 
             else { alert("Format file Excel tidak sesuai."); }
         } catch(err) { alert("Terjadi kesalahan saat membaca file Excel."); }
     };
     reader.readAsArrayBuffer(file); event.target.value = '';
 }
 
-// FUNGSI RENDER DIPERBARUI: Menyimpan status scroll
+// RENDER FUNCTION DENGAN STATE PRESERVATION (Menjaga posisi scroll saat di-klik)
 function render(){
-  // 1. Simpan posisi scroll sebelum komponen digambar ulang
+  // Simpan posisi scroll sementara
   var scrollPositions = {};
   document.querySelectorAll('.dim-card').forEach(function(card) {
       var wrapper = card.querySelector('.levels-wrapper');
-      if(wrapper) {
-          scrollPositions[card.dataset.id] = wrapper.scrollLeft;
-      }
+      if(wrapper) { scrollPositions[card.dataset.id] = wrapper.scrollLeft; }
   });
 
-  // 2. Gambar ulang komponen
   var c=document.getElementById("dimContainer"); c.innerHTML="";
   rubric.dimensions.forEach(function(dim,i){c.appendChild(buildCard(dim,i));});
   renderGradeScaleDisplay(); renderGsEditor(); updateTotal(); checkWeights();
   if(editMode) applyEditableState(true);
   attachDragEvents();
 
-  // 3. Kembalikan posisi scroll ke tempat semula
+  // Kembalikan posisi scroll ke tempat semula
   document.querySelectorAll('.dim-card').forEach(function(card) {
       var wrapper = card.querySelector('.levels-wrapper');
       if(wrapper && scrollPositions[card.dataset.id] !== undefined) {
@@ -507,9 +519,7 @@ function render(){
 }
 
 function buildCard(dim,idx){
-  var card=document.createElement("div");
-  card.className="dim-card priority-"+dim.priority;
-  card.dataset.id=dim.id;
+  var card=document.createElement("div"); card.className="dim-card priority-"+dim.priority; card.dataset.id=dim.id;
   var sorted=dim.levels.slice().sort(function(a,b){return b.score-a.score;});
   var n=sorted.length; var maxS=n?sorted[0].score:4;
 
@@ -539,44 +549,30 @@ function buildCard(dim,idx){
 function attachDragEvents() {
     const sliders = document.querySelectorAll('.levels-wrapper');
     sliders.forEach(slider => {
-        let isDown = false;
-        let startX;
-        let scrollLeft;
-
-        slider.addEventListener('mousedown', (e) => {
-            isDown = true;
-            isDraggingGrid = false; 
-            slider.classList.add('active');
-            startX = e.pageX - slider.offsetLeft;
-            scrollLeft = slider.scrollLeft;
-        });
+        let isDown = false; let startX; let scrollLeft;
+        slider.addEventListener('mousedown', (e) => { isDown = true; isDraggingGrid = false; slider.classList.add('active'); startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
         slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
         slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
         slider.addEventListener('mousemove', (e) => {
             if (!isDown) return;
-            e.preventDefault();
-            const x = e.pageX - slider.offsetLeft;
-            const walk = (x - startX) * 1.5; 
+            e.preventDefault(); const x = e.pageX - slider.offsetLeft; const walk = (x - startX) * 1.5; 
             if (Math.abs(walk) > 5) { isDraggingGrid = true; }
             slider.scrollLeft = scrollLeft - walk;
         });
     });
 }
 
-function addLevel(d,r,p){ var dim=rubric.dimensions.find(x=>x.id===d); var sorted=dim.levels.sort((a,b)=>b.score-a.score); var idx=sorted.findIndex(x=>x.score===r); sorted.splice(p==='after'?idx+1:idx,0,{score:0,label:"New",desc:"Desc"}); var n=sorted.length; sorted.forEach((l,i)=>l.score=n-i); dim.levels=sorted; delete scores[d]; render();}
-function removeLevel(d,s){ var dim=rubric.dimensions.find(x=>x.id===d); if(dim.levels.length<=2)return; dim.levels=dim.levels.filter(x=>x.score!==s); var sorted=dim.levels.sort((a,b)=>b.score-a.score); var n=sorted.length; sorted.forEach((l,i)=>l.score=n-i); if(scores[d]===s) delete scores[d]; render();}
+function addLevel(d,r,p){ var dim=rubric.dimensions.find(x=>x.id===d); var sorted=dim.levels.sort((a,b)=>b.score-a.score); var idx=sorted.findIndex(x=>x.score===r); sorted.splice(p==='after'?idx+1:idx,0,{score:0,label:"New",desc:"Desc"}); var n=sorted.length; sorted.forEach((l,i)=>l.score=n-i); dim.levels=sorted; delete scores[d]; saveTemplate(); render();}
+function removeLevel(d,s){ var dim=rubric.dimensions.find(x=>x.id===d); if(dim.levels.length<=2)return; dim.levels=dim.levels.filter(x=>x.score!==s); var sorted=dim.levels.sort((a,b)=>b.score-a.score); var n=sorted.length; sorted.forEach((l,i)=>l.score=n-i); if(scores[d]===s) delete scores[d]; saveTemplate(); render();}
 function renderGradeScaleDisplay(){var t=calcTotal(),c=isComplete(); var s=rubric.gradeScale.slice().sort((a,b)=>b.min-a.min); var a=c?s.find(g=>t>=g.min):null; document.getElementById("gradeScaleDisplay").innerHTML=s.map(g=>'<span class="gs-item'+(a&&a.grade===g.grade?" active":"")+'">'+esc(g.grade)+' &ge; '+g.min+' &mdash; '+esc(g.label)+'</span>').join("");}
 function renderGsEditor(){var s=rubric.gradeScale.slice().sort((a,b)=>b.min-a.min); document.getElementById("gsEditorRows").innerHTML=s.map(g=>'<div class="gs-row"><input class="gs-inp gs-inp-grade" value="'+esc(g.grade)+'" onchange="updateGrade(\''+esc(g.grade)+'\',\'grade\',this.value)"/><input class="gs-inp gs-inp-min" type="number" value="'+g.min+'" onchange="updateGrade(\''+esc(g.grade)+'\',\'min\',this.value)"/><input class="gs-inp gs-inp-label" value="'+esc(g.label)+'" onchange="updateGrade(\''+esc(g.grade)+'\',\'label\',this.value)"/>'+(s.length>1?'<button class="gs-row-del" onclick="removeGrade(\''+esc(g.grade)+'\')">✕</button>':'')+'</div>').join("");}
-function updateGrade(o,f,v){var g=rubric.gradeScale.find(x=>x.grade===o); if(f==='min')g.min=parseFloat(v)||0; else if(f==='grade')g.grade=v.trim(); else g.label=v.trim(); renderGradeScaleDisplay(); updateTotal();}
-function removeGrade(g){rubric.gradeScale=rubric.gradeScale.filter(x=>x.grade!==g); renderGsEditor(); renderGradeScaleDisplay(); updateTotal();}
-function addGradeRow(){rubric.gradeScale.push({grade:"?",min:0,label:"New"}); renderGsEditor(); renderGradeScaleDisplay();}
+function updateGrade(o,f,v){var g=rubric.gradeScale.find(x=>x.grade===o); if(f==='min')g.min=parseFloat(v)||0; else if(f==='grade')g.grade=v.trim(); else g.label=v.trim(); saveTemplate(); renderGradeScaleDisplay(); updateTotal();}
+function removeGrade(g){rubric.gradeScale=rubric.gradeScale.filter(x=>x.grade!==g); saveTemplate(); renderGsEditor(); renderGradeScaleDisplay(); updateTotal();}
+function addGradeRow(){rubric.gradeScale.push({grade:"?",min:0,label:"New"}); saveTemplate(); renderGsEditor(); renderGradeScaleDisplay();}
 
 function selectScore(dimId,score){
   if(editMode) return;
-  if(isDraggingGrid) {
-      isDraggingGrid = false; 
-      return; 
-  }
+  if(isDraggingGrid) { isDraggingGrid = false; return; }
   scores[dimId]=scores[dimId]===score?undefined:score;
   render(); saveDraft(); 
 }
@@ -591,36 +587,21 @@ function updateTotal(){
   else{document.getElementById("gradeBadge").textContent="—"; document.getElementById("totalNote").textContent=sc+" of "+rubric.dimensions.length+" scored";}
 }
 
-function resetScores(){
-    scores={}; document.getElementById("studentName").value=""; document.getElementById("studentId").value=""; document.getElementById("feedbackBox").value=""; clearDraft(); render();
-}
+function resetScores(){ scores={}; document.getElementById("studentName").value=""; document.getElementById("studentId").value=""; document.getElementById("feedbackBox").value=""; clearDraft(); render(); }
+function applyEditableState(on){ ["rubricTitle","rubricCourse","rubricDesc","tagCourse"].forEach(id=>{var e=document.getElementById(id);if(e)e.contentEditable=on?"true":"false";}); document.querySelectorAll(".dim-name,.level-label,.level-desc").forEach(e=>e.contentEditable=on?"true":"false"); }
+function toggleMode(){ editMode=!editMode; document.body.className=editMode?"edit-mode":"score-mode"; document.getElementById("modeBadge").className="mode-badge "+(editMode?"mode-edit":"mode-score"); document.getElementById("modeBadge").textContent=editMode?"Edit mode":"Score mode"; document.getElementById("toggleBtn").textContent=editMode?"\u2713 Done editing":"\u270F\uFE0F Edit template"; applyEditableState(editMode); }
 
-function applyEditableState(on){
-  ["rubricTitle","rubricCourse","rubricDesc","tagCourse"].forEach(id=>{var e=document.getElementById(id);if(e)e.contentEditable=on?"true":"false";});
-  document.querySelectorAll(".dim-name,.level-label,.level-desc").forEach(e=>e.contentEditable=on?"true":"false");
-}
-
-function toggleMode(){
-  editMode=!editMode;
-  document.body.className=editMode?"edit-mode":"score-mode";
-  document.getElementById("modeBadge").className="mode-badge "+(editMode?"mode-edit":"mode-score");
-  document.getElementById("modeBadge").textContent=editMode?"Edit mode":"Score mode";
-  document.getElementById("toggleBtn").textContent=editMode?"\u2713 Done editing":"\u270F\uFE0F Edit template";
-  applyEditableState(editMode);
-}
-
-function updateDimName(id,val){var d=rubric.dimensions.find(x=>x.id===id);if(d)d.name=val.trim();}
-function updateDimWeight(id,val){var d=rubric.dimensions.find(x=>x.id===id);if(d){d.weight=parseFloat(val)||0;checkWeights();updateTotal();}}
-function updateLevelLabel(dId,s,v){var d=rubric.dimensions.find(x=>x.id===dId);if(d){var l=d.levels.find(x=>x.score===s);if(l)l.label=v.trim();}}
-function updateLevelDesc(dId,s,v){var d=rubric.dimensions.find(x=>x.id===dId);if(d){var l=d.levels.find(x=>x.score===s);if(l)l.desc=v.trim();}}
-function cyclePriority(id){if(!editMode)return; var d=rubric.dimensions.find(x=>x.id===id); if(d){d.priority=PRIORITIES[(PRIORITIES.indexOf(d.priority)+1)%PRIORITIES.length]; render();}}
-function addDimension(){rubric.dimensions.push({id:nextId++,name:"New dim",weight:10,priority:"medium",levels:[{score:4,label:"L4",desc:""},{score:3,label:"L3",desc:""},{score:2,label:"L2",desc:""},{score:1,label:"L1",desc:""}]}); render();}
-function removeDimension(id){if(rubric.dimensions.length<=1)return; rubric.dimensions=rubric.dimensions.filter(x=>x.id!==id); delete scores[id]; render();}
+function updateDimName(id,val){var d=rubric.dimensions.find(x=>x.id===id);if(d)d.name=val.trim(); saveTemplate();}
+function updateDimWeight(id,val){var d=rubric.dimensions.find(x=>x.id===id);if(d){d.weight=parseFloat(val)||0; saveTemplate(); checkWeights(); updateTotal();}}
+function updateLevelLabel(dId,s,v){var d=rubric.dimensions.find(x=>x.id===dId);if(d){var l=d.levels.find(x=>x.score===s);if(l)l.label=v.trim();} saveTemplate();}
+function updateLevelDesc(dId,s,v){var d=rubric.dimensions.find(x=>x.id===dId);if(d){var l=d.levels.find(x=>x.score===s);if(l)l.desc=v.trim();} saveTemplate();}
+function cyclePriority(id){if(!editMode)return; var d=rubric.dimensions.find(x=>x.id===id); if(d){d.priority=PRIORITIES[(PRIORITIES.indexOf(d.priority)+1)%PRIORITIES.length]; saveTemplate(); render();}}
+function addDimension(){rubric.dimensions.push({id:nextId++,name:"New dim",weight:10,priority:"medium",levels:[{score:4,label:"L4",desc:""},{score:3,label:"L3",desc:""},{score:2,label:"L2",desc:""},{score:1,label:"L1",desc:""}]}); saveTemplate(); render();}
+function removeDimension(id){if(rubric.dimensions.length<=1)return; rubric.dimensions=rubric.dimensions.filter(x=>x.id!==id); delete scores[id]; saveTemplate(); render();}
 function checkWeights(){var t=rubric.dimensions.reduce((s,d)=>s+d.weight,0); document.getElementById("weightWarning").classList.toggle("show",Math.abs(t-100)>0.5);}
 
 function copySummary(){
-  var lines=["ASSESSMENT SUMMARY \u2014 "+document.getElementById("rubricTitle").textContent,
-             "Student: "+(document.getElementById("studentName").value||"N/A")+"  |  ID: "+(document.getElementById("studentId").value||"N/A")+"\n"];
+  var lines=["ASSESSMENT SUMMARY \u2014 "+document.getElementById("rubricTitle").textContent, "Student: "+(document.getElementById("studentName").value||"N/A")+"  |  ID: "+(document.getElementById("studentId").value||"N/A")+"\n"];
   rubric.dimensions.forEach(d=>{
     var s=scores[d.id], mx=Math.max(...d.levels.map(l=>l.score)), lvl=s!==undefined?d.levels.find(l=>l.score===s):null;
     lines.push("  "+(d.name.length>40?d.name.substring(0,38)+"...":d.name).padEnd(42)+(lvl?lvl.label:"\u2014").padEnd(15)+(s!==undefined?((s/mx)*d.weight).toFixed(1):"\u2014")+"/"+d.weight);
@@ -636,63 +617,36 @@ function saveHistory(arr) { localStorage.setItem("rubricHistory", JSON.stringify
 function saveEvaluation() {
     if (!isComplete()) { alert("Lengkapi penilaian sebelum menyimpan."); return; }
     var history = getHistory();
-    history.push({
-        name: document.getElementById("studentName").value || "Student " + (history.length + 1),
-        id: document.getElementById("studentId").value || "N/A",
-        date: document.getElementById("dateField").value,
-        total: parseFloat(calcTotal().toFixed(2)),
-        scores: Object.assign({}, scores),
-        feedback: document.getElementById("feedbackBox").value.trim() 
-    });
-    saveHistory(history);
-    clearDraft();
-    alert("Data tersimpan ke Cohort Analytics!");
-    resetScores();
+    history.push({ name: document.getElementById("studentName").value || "Student " + (history.length + 1), id: document.getElementById("studentId").value || "N/A", date: document.getElementById("dateField").value, total: parseFloat(calcTotal().toFixed(2)), scores: Object.assign({}, scores), feedback: document.getElementById("feedbackBox").value.trim() });
+    saveHistory(history); clearDraft(); alert("Data tersimpan ke Cohort Analytics!"); resetScores();
 }
 
-function deleteHistoryRecord(index) {
-    if(confirm("Yakin ingin menghapus nilai mahasiswa ini?")) {
-        var history = getHistory();
-        history.splice(index, 1);
-        saveHistory(history);
-        renderAnalytics(); 
-    }
-}
+function deleteHistoryRecord(index) { if(confirm("Yakin ingin menghapus nilai mahasiswa ini?")) { var history = getHistory(); history.splice(index, 1); saveHistory(history); renderAnalytics(); } }
 
 function toggleAnalytics() {
     var isScore = document.getElementById("gradingView").style.display !== "none";
-    document.getElementById("gradingView").style.display = isScore ? "none" : "block";
-    document.getElementById("analyticsView").style.display = isScore ? "block" : "none";
-    if(isScore) renderAnalytics();
-    document.getElementById("toolbarActions").classList.remove("show"); 
+    document.getElementById("gradingView").style.display = isScore ? "none" : "block"; document.getElementById("analyticsView").style.display = isScore ? "block" : "none";
+    if(isScore) renderAnalytics(); document.getElementById("toolbarActions").classList.remove("show"); 
 }
 
 function calculateAverages(history) {
     var totals = {}, counts = {};
     history.forEach(r => { Object.keys(r.scores).forEach(dId => { totals[dId] = (totals[dId] || 0) + r.scores[dId]; counts[dId] = (counts[dId] || 0) + 1; }); });
-    var averages = {};
-    Object.keys(totals).forEach(dId => averages[dId] = totals[dId] / counts[dId]);
-    return averages;
+    var averages = {}; Object.keys(totals).forEach(dId => averages[dId] = totals[dId] / counts[dId]); return averages;
 }
 
 function renderAnalytics() {
-    var history = getHistory();
-    document.getElementById("statTotalStudents").textContent = history.length;
+    var history = getHistory(); document.getElementById("statTotalStudents").textContent = history.length;
     if (history.length === 0) { document.getElementById("statAvgScore").textContent = "0.0"; document.getElementById("chartContainer").innerHTML = "<p style='color:var(--slate); font-size:13px;'>Belum ada data.</p>"; document.getElementById("historyTableBody").innerHTML = ""; return; }
-
     document.getElementById("statAvgScore").textContent = (history.reduce((s,r)=>s+r.total,0)/history.length).toFixed(1);
     currentCohortAverages = calculateAverages(history);
-    
     var chartHtml = "";
     rubric.dimensions.forEach(dim => {
-        var avg = currentCohortAverages[dim.id] || 0;
-        var mx = Math.max(...dim.levels.map(l=>l.score));
-        var pct = mx>0 ? (avg/mx)*100 : 0;
+        var avg = currentCohortAverages[dim.id] || 0; var mx = Math.max(...dim.levels.map(l=>l.score)); var pct = mx>0 ? (avg/mx)*100 : 0;
         var col = pct>=75 ? "var(--teal)" : pct>=50 ? "var(--gold)" : "var(--red)";
         chartHtml += `<div class="chart-row"><div class="chart-label">${esc(dim.name)}</div><div class="chart-bar-wrap"><div class="chart-bar-fill" style="width:${pct}%; background:${col};"></div></div><div class="chart-score">${avg.toFixed(1)}/${mx}</div></div>`;
     });
     document.getElementById("chartContainer").innerHTML = chartHtml;
-
     document.getElementById("historyTableBody").innerHTML = history.map((r,i) => 
         `<tr><td>${esc(r.date)}</td><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td style="font-weight:600;">${r.total.toFixed(1)}</td>
         <td><a class="action-link" onclick="openRadar(${i})">Review / Edit</a><a class="action-link del" onclick="deleteHistoryRecord(${i})">Hapus</a></td></tr>`
@@ -703,8 +657,7 @@ function exportAnalyticsExcel() {
     var history = getHistory(); if (!history.length) return alert("Belum ada data untuk di-export.");
     var rows = history.map(r => {
         var obj = { "Date": r.date, "Student Name": r.name, "ID / NIM": r.id, "Total Score": r.total };
-        rubric.dimensions.forEach(d => { obj[d.name] = r.scores[d.id] || 0; });
-        obj["Feedback & Notes"] = r.feedback || ""; return obj;
+        rubric.dimensions.forEach(d => { obj[d.name] = r.scores[d.id] || 0; }); obj["Feedback & Notes"] = r.feedback || ""; return obj;
     });
     var ws = XLSX.utils.json_to_sheet(rows); var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Cohort Analytics"); XLSX.writeFile(wb, "Cohort_Analytics_Export.xlsx");
 }
@@ -712,16 +665,8 @@ function exportAnalyticsExcel() {
 function clearAllHistory() { if(confirm("Hapus SELURUH data angkatan ini?")) { localStorage.removeItem("rubricHistory"); renderAnalytics(); } }
 
 function openRadar(index) {
-    currentRadarIndex = index;
-    var history = getHistory();
-    var student = history[index];
-    currentRadarScores = Object.assign({}, student.scores);
-    
-    document.getElementById("radarStudentName").textContent = student.name;
-    document.getElementById("radarStudentId").textContent = student.id || "N/A";
-    document.getElementById("radarStudentDate").textContent = student.date || "N/A";
-    document.getElementById("radarEditFeedback").value = student.feedback || "";
-
+    currentRadarIndex = index; var history = getHistory(); var student = history[index]; currentRadarScores = Object.assign({}, student.scores);
+    document.getElementById("radarStudentName").textContent = student.name; document.getElementById("radarStudentId").textContent = student.id || "N/A"; document.getElementById("radarStudentDate").textContent = student.date || "N/A"; document.getElementById("radarEditFeedback").value = student.feedback || "";
     var formHtml = "";
     rubric.dimensions.forEach(d => {
         formHtml += `<div class="qe-group"><label class="qe-label" title="${esc(d.name)}">${esc(d.name)}</label><select class="qe-select" onchange="updateLiveRadarScore(${d.id}, this.value)">`;
@@ -729,53 +674,39 @@ function openRadar(index) {
         sortedLevels.forEach(l => { var isSel = (currentRadarScores[d.id] == l.score) ? "selected" : ""; formHtml += `<option value="${l.score}" ${isSel}>${l.score} - ${esc(l.label)}</option>`; });
         formHtml += `</select></div>`;
     });
-    document.getElementById("radarQuickEditForm").innerHTML = formHtml;
-    document.getElementById("radarModal").style.display = "flex";
-    drawRadarLiveSVG();
+    document.getElementById("radarQuickEditForm").innerHTML = formHtml; document.getElementById("radarModal").style.display = "flex"; drawRadarLiveSVG();
 }
 
 function updateLiveRadarScore(dimId, newScore) { currentRadarScores[dimId] = parseFloat(newScore); drawRadarLiveSVG(); }
 
 function drawRadarLiveSVG() {
-    var size = 260, center = size/2, radius = 90;
-    var dims = rubric.dimensions; var num = dims.length;
+    var size = 260, center = size/2, radius = 90; var dims = rubric.dimensions; var num = dims.length;
     var svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
-    
     for(var lvl=1; lvl<=4; lvl++) {
         var r = radius * (lvl/4); var pts = [];
         for(var i=0; i<num; i++) { var ang = (Math.PI*2*i)/num - Math.PI/2; pts.push(`${center + r*Math.cos(ang)},${center + r*Math.sin(ang)}`); }
         svg += `<polygon points="${pts.join(' ')}" fill="none" stroke="var(--border)" stroke-width="1"/>`;
     }
-    
     dims.forEach((d, i) => {
-        var ang = (Math.PI*2*i)/num - Math.PI/2;
-        var x2 = center + radius*Math.cos(ang), y2 = center + radius*Math.sin(ang);
+        var ang = (Math.PI*2*i)/num - Math.PI/2; var x2 = center + radius*Math.cos(ang), y2 = center + radius*Math.sin(ang);
         svg += `<line x1="${center}" y1="${center}" x2="${x2}" y2="${y2}" stroke="var(--border)" stroke-width="1"/>`;
-        var lx = center + (radius+25)*Math.cos(ang), ly = center + (radius+15)*Math.sin(ang);
-        var lbl = d.name.length > 15 ? d.name.substring(0,12)+"..." : d.name;
+        var lx = center + (radius+25)*Math.cos(ang), ly = center + (radius+15)*Math.sin(ang); var lbl = d.name.length > 15 ? d.name.substring(0,12)+"..." : d.name;
         svg += `<text x="${lx}" y="${ly}" font-size="10" font-family="DM Sans" text-anchor="middle" fill="var(--slate)">${esc(lbl)}</text>`;
     });
-
     var getPoly = function(dataObj) {
         var pts = [];
         dims.forEach((d, i) => {
-            var val = dataObj[d.id] || 0; var mx = Math.max(...d.levels.map(l=>l.score));
-            var r = mx > 0 ? radius * (val/mx) : 0; var ang = (Math.PI*2*i)/num - Math.PI/2;
+            var val = dataObj[d.id] || 0; var mx = Math.max(...d.levels.map(l=>l.score)); var r = mx > 0 ? radius * (val/mx) : 0; var ang = (Math.PI*2*i)/num - Math.PI/2;
             pts.push(`${center + r*Math.cos(ang)},${center + r*Math.sin(ang)}`);
         });
         return pts.join(' ');
     };
-
     svg += `<polygon points="${getPoly(currentCohortAverages)}" fill="var(--teal)" fill-opacity="0.2" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4"/>`;
     svg += `<polygon points="${getPoly(currentRadarScores)}" fill="var(--gold)" fill-opacity="0.4" stroke="var(--gold)" stroke-width="2" style="transition: all 0.3s ease;"/>`;
-    svg += `</svg>`;
-    document.getElementById("radarSvgContainer").innerHTML = svg;
-
+    svg += `</svg>`; document.getElementById("radarSvgContainer").innerHTML = svg;
     var liveTotal = 0;
     dims.forEach(d => { if(currentRadarScores[d.id] !== undefined){ var mx=Math.max(...d.levels.map(l=>l.score)); liveTotal += (currentRadarScores[d.id]/mx)*d.weight; } });
-    var scoreDisplay = document.getElementById("radarStudentScore");
-    scoreDisplay.textContent = liveTotal.toFixed(1);
-    scoreDisplay.style.color = liveTotal >= 80 ? "var(--teal)" : liveTotal >= 60 ? "var(--gold)" : "var(--red)";
+    var scoreDisplay = document.getElementById("radarStudentScore"); scoreDisplay.textContent = liveTotal.toFixed(1); scoreDisplay.style.color = liveTotal >= 80 ? "var(--teal)" : liveTotal >= 60 ? "var(--gold)" : "var(--red)";
 }
 
 function saveRadarEdit() {
@@ -786,6 +717,7 @@ function saveRadarEdit() {
 }
 
 // ── INIT ────────────────────────────────────────────────────────────────────
+initHeaders();
 loadDraft();
 render();
 </script>
