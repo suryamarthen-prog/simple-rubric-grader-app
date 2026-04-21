@@ -23,8 +23,8 @@ It eliminates grading fatigue and provides instant visual feedback on student pe
 1. Clone this repository or download the `index.html` file.
 2. Open `index.html` in any modern web browser (Chrome, Edge, Safari, iPad).
 3. Click **✏️ Edit template** to set up your grading dimensions, weights, and criteria.
-4. Save your template via **📥 Download JSON** for future use.
-5. Start grading! Use the **💾 Save to Cohort** button to build your class analytics.
+4. Save your template via **📥 Download Template** for future use.
+5. Start grading! Use the **💾 Save to Database** button to build your class analytics.
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. Feel free to fork, modify, and use it for your own academic or professional evaluations!
