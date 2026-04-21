@@ -24,16 +24,20 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--navy);min-height:100vh;}
-.toolbar{position:sticky;top:0;z-index:100;background:var(--navy);display:flex;align-items:center;gap:8px;padding:10px 32px;box-shadow:0 2px 12px rgba(0,0,0,.18);flex-wrap:wrap;}
-.toolbar-title{font-size:13px;font-weight:500;color:#AAB4C8;margin-right:auto; display:flex; align-items:center; gap:10px;}
+
+.toolbar{position:sticky;top:0;z-index:100;background:var(--navy);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 32px;box-shadow:0 2px 12px rgba(0,0,0,.18);}
+.toolbar-title{font-size:14px;font-weight:500;color:#AAB4C8; display:flex; align-items:center; gap:10px;}
 .draft-badge{font-size:10px; background:rgba(255,255,255,0.1); color:#AAB4C8; padding:3px 8px; border-radius:4px; display:none; transition: all 0.2s;}
+.mobile-menu-btn { display: none; background: transparent; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+.toolbar-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
 .btn{border:none;cursor:pointer;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:7px 16px;transition:all .15s;}
 .btn-ghost{background:transparent;color:#AAB4C8;border:1px solid rgba(255,255,255,.15);}
 .btn-ghost:hover{background:rgba(255,255,255,.08);color:white;}
 .btn-gold{background:var(--gold);color:white;}.btn-gold:hover{background:#9A7030;}
 .btn-teal{background:var(--teal);color:white;}.btn-teal:hover{background:#205F55;}
 .btn-sm{padding: 5px 12px; font-size:11px;}
-.mode-badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500;}
+.mode-badge{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:500; margin-right: 8px;}
 .mode-edit{background:rgba(181,134,58,.2);color:#F0C070;}
 .mode-score{background:rgba(42,123,111,.2);color:#7ECFC5;}
 
@@ -45,18 +49,19 @@ body.edit-mode .edit-toolbar {display: flex; align-items: center;}
 .edit-hint{display:none;font-size:10px;color:var(--gold);font-style:italic;margin-left:6px;opacity:.7;}
 body.edit-mode .edit-hint{display:inline;}
 body.edit-mode [contenteditable]:hover{background:rgba(181,134,58,.06);border-radius:3px;cursor:text;}
+
 .page{max-width:1120px;margin:0 auto;padding:32px 32px 80px;}
 
-.rubric-header{margin-bottom:40px;border-bottom:2px solid var(--navy);padding-bottom:24px;}
-.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap;}
-.header-left{flex:1;min-width:260px;}
+.rubric-header{margin-bottom:30px;border-bottom:2px solid var(--navy);padding-bottom:24px;}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;}
+.header-left{flex:1;}
 .tag-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
 .tag{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:var(--gold-lt);color:var(--gold);border:1px solid rgba(181,134,58,.3);}
 .rubric-title{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;line-height:1.1;color:var(--navy);margin-bottom:6px;}
 .rubric-course{font-size:15px;color:var(--slate);font-weight:300;}
 .rubric-desc{font-size:13px;color:var(--slate);margin-top:10px;line-height:1.7;max-width:560px;}
 .header-meta{display:flex;flex-direction:column;gap:8px;align-items:flex-end;}
-.field-group{display:flex;flex-direction:column;gap:3px;}
+.field-group{display:flex;flex-direction:column;gap:3px; width: 100%;}
 .field-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);}
 .field-input{border:none;border-bottom:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--navy);padding:4px 2px;width:220px;outline:none;transition:border-color .15s;}
 .field-input:focus{border-bottom-color:var(--navy);}
@@ -78,6 +83,14 @@ body.edit-mode .dim-weight{display:none;}
 body.edit-mode .dim-weight-input{display:inline-block;}
 .dim-remove{display:none;background:none;border:none;cursor:pointer;color:var(--red);font-size:16px;padding:0 4px;line-height:1;opacity:.5;}
 body.edit-mode .dim-remove{display:block;}
+
+/* SIDE SCROLL DRAG & VISUAL SCROLLBAR */
+.levels-wrapper { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 8px; cursor: grab; user-select: none; }
+.levels-wrapper:active { cursor: grabbing; }
+.levels-wrapper::-webkit-scrollbar { height: 6px; }
+.levels-wrapper::-webkit-scrollbar-track { background: var(--paper); border-radius: 4px; }
+.levels-wrapper::-webkit-scrollbar-thumb { background: rgba(42,123,111,0.5); border-radius: 4px; }
+.levels-wrapper::-webkit-scrollbar-thumb:hover { background: var(--teal); }
 
 .levels-grid{display:grid;}
 .level-cell{padding:12px 14px;border-right:1px solid var(--border);position:relative;transition:background .15s;}
@@ -127,52 +140,72 @@ body.edit-mode .add-dim-btn{display:block;}
 .feedback-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--slate);margin-bottom:6px;display:block;}
 .feedback-box{width:100%;border:1px solid var(--border);border-radius:8px;background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--navy);padding:12px 14px;resize:vertical;min-height:70px;}
 
-/* Analytics & Table Styles */
-.analytics-header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--navy); padding-bottom: 20px;}
-.stat-card-row { display: flex; gap: 20px; margin-bottom: 30px;}
-.stat-card { flex: 1; background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; box-shadow:0 4px 12px rgba(28,43,74,.05); }
+/* Analytics & Radar Chart Styles */
+.analytics-header { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--navy); padding-bottom: 20px; flex-wrap: wrap; gap: 12px;}
+.stat-card-row { display: flex; gap: 20px; margin-bottom: 30px; flex-wrap: wrap;}
+.stat-card { flex: 1; min-width: 150px; background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; box-shadow:0 4px 12px rgba(28,43,74,.05); }
 .stat-val { font-family: 'Cormorant Garamond', serif; font-size: 48px; font-weight: 600; color: var(--teal); line-height: 1; margin-bottom: 8px;}
 .stat-lbl { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--slate); }
-.chart-container { background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 30px;}
+.chart-container { background: var(--paper); border: 1px solid var(--border); border-radius: 10px; padding: 24px; margin-bottom: 30px; overflow-x: auto;}
 .chart-title { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 20px; display:flex; justify-content:space-between; align-items:center;}
 .chart-row { display: flex; align-items: center; margin-bottom: 16px;}
 .chart-label { width: 300px; font-size: 13px; font-weight: 500; color: var(--navy); padding-right: 16px;}
-.chart-bar-wrap { flex: 1; background: var(--border); height: 12px; border-radius: 6px; overflow: hidden;}
-.chart-bar-fill { height: 100%; background: var(--gold); border-radius: 6px; transition: width 0.4s;}
+.chart-bar-wrap { flex: 1; min-width: 100px; background: var(--border); height: 12px; border-radius: 6px; overflow: hidden;}
+.chart-bar-fill { height: 100%; background: var(--gold); border-radius: 6px;}
 .chart-score { width: 50px; text-align: right; font-size: 13px; font-weight: 600; color: var(--slate); }
-.history-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align:left;}
+
+.history-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align:left; min-width: 600px;}
 .history-table th { padding: 12px; background: var(--navy); color: white; font-weight: 500;}
 .history-table td { padding: 12px; border-bottom: 1px solid var(--border); color: var(--navy);}
-.action-link { color: var(--gold); cursor: pointer; font-weight: 500; margin-right:12px; text-decoration:none;}
-.action-link:hover { text-decoration: underline; }
+.action-link { display: inline-block; color: var(--gold); cursor: pointer; font-weight: 500; margin-right:8px; text-decoration:none; padding: 4px 8px; border-radius: 4px; transition: background 0.15s;}
+.action-link:hover { background: var(--gold-lt); }
 .action-link.del { color: var(--red); }
+.action-link.del:hover { background: var(--red-lt); }
 
-/* Modal Radar Editable - Split View */
+/* Modal Radar Enhancements: Two Column Layout */
 .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(28,43,74,0.8); z-index:999; justify-content:center; align-items:center;}
-.modal-content { background:var(--paper); padding:30px; border-radius:12px; max-width:850px; width:95%; position:relative; display:flex; flex-direction:column; max-height: 90vh;}
-.modal-split { display: flex; gap: 30px; margin-top: 10px; overflow-y: hidden; min-height: 0;}
-.modal-left { flex: 1; display: flex; flex-direction: column; align-items: center;}
-.modal-right { flex: 1.2; display: flex; flex-direction: column; overflow-y: auto; padding-right: 10px;}
-@media (max-width: 768px) {
-    .modal-split { flex-direction: column; overflow-y: auto;}
-    .modal-right { overflow-y: visible; padding-right: 0;}
-}
-
-.close-btn { position:absolute; top:20px; right:20px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate); z-index:10;}
-.radar-identity { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; font-size: 13px; color: var(--slate); width: 100%; background: var(--cream); padding: 12px; border-radius: 8px;}
+.modal-content { background:var(--paper); padding:30px; border-radius:12px; max-width:850px; width:95%; position:relative; display:flex; flex-direction:row; gap:24px; max-height: 90vh;}
+.modal-col-left { flex: 1; display:flex; flex-direction:column; }
+.modal-col-right { flex: 1; display:flex; flex-direction:column; padding-left:24px; border-left:1px solid var(--border); overflow-y:auto; padding-right: 10px;}
+.close-btn { position:absolute; top:15px; right:20px; background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate); z-index: 10;}
+.radar-identity { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; font-size: 13px; color: var(--slate); }
 .radar-id-item strong { color: var(--navy); }
-.radar-legend { display:flex; gap:16px; justify-content:center; margin-top:0px; font-size:12px; color:var(--slate);}
+.radar-legend { display:flex; gap:16px; justify-content:center; margin-top:10px; font-size:12px; color:var(--slate);}
 .legend-item { display:flex; align-items:center; gap:6px;}
 .legend-color { width:12px; height:12px; border-radius:3px;}
 
-.modal-edit-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border);}
-.modal-edit-label { font-size: 13px; font-weight: 600; color: var(--navy); }
-.modal-edit-select { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--navy); background: white; outline: none;}
-.modal-edit-select:focus { border-color: var(--teal); }
+.qe-group { margin-bottom: 12px; }
+.qe-label { display: block; font-size: 11px; color: var(--navy); font-weight: 500; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.qe-select { width: 100%; border: 1px solid var(--border); border-radius: 4px; font-family: 'DM Sans'; font-size: 12px; padding: 6px; background: white; color: var(--navy); outline:none;}
+.qe-select:focus { border-color: var(--teal); }
 
-.radar-feedback-title { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--slate); margin-bottom: 8px; margin-top: 10px;}
-.radar-feedback-text { font-size: 13px; color: var(--navy); background: white; padding: 12px; border-radius: 6px; white-space: pre-wrap; line-height: 1.5; min-height: 80px; width: 100%; border: 1px solid var(--border); font-family: 'DM Sans', sans-serif; resize: vertical;}
-.radar-feedback-text:focus { border-color: var(--teal); outline: none;}
+/* MOBILE RESPONSIVE TWEAKS */
+@media (max-width: 768px) { 
+    .page { padding: 20px 16px 80px; }
+    .toolbar { padding: 12px 16px; }
+    .mobile-menu-btn { display: block; }
+    .toolbar-actions { display: none; width: 100%; flex-direction: column; align-items: stretch; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 16px; margin-top: 10px; gap: 8px;}
+    .toolbar-actions.show { display: flex; }
+    .toolbar-actions .btn { width: 100%; text-align: left; padding: 12px 16px; font-size: 14px;}
+    .mode-badge { align-self: flex-start; margin-bottom: 8px;}
+    
+    .edit-toolbar { flex-direction: column; align-items: stretch; padding: 16px; }
+    .edit-toolbar .btn { width: 100%; }
+
+    .header-top { flex-direction: column; }
+    .header-meta { align-items: flex-start; width: 100%; margin-top: 16px;}
+    .field-input { width: 100%; }
+
+    .rubric-title { font-size: 32px; }
+    .total-section { flex-direction: column; align-items: flex-start; padding: 20px; }
+    .total-bar-wrap { width: 100%; }
+    .grade-badge-large { align-self: stretch; text-align: center; }
+
+    .levels-grid { min-width: 600px; } 
+    
+    .modal-content { flex-direction:column; overflow-y:auto; padding: 20px;} 
+    .modal-col-right { padding-left:0; border-left:none; border-top:1px solid var(--border); padding-top:20px; margin-top:10px; overflow-y:visible;}
+}
 
 @media print{.toolbar,.edit-toolbar,.gs-editor,.level-edit-bar,.add-dim-btn,.dim-remove{display:none!important;}.page{padding:24px;}}
 </style>
@@ -184,13 +217,18 @@ body.edit-mode .add-dim-btn{display:block;}
     Pro-Rubric Evaluator
     <span class="draft-badge" id="draftBadge">Unsaved Draft</span>
   </div>
-  <span id="modeBadge" class="mode-badge mode-score">Score mode</span>
-  <button class="btn btn-ghost" id="toggleBtn" onclick="toggleMode()">✏️ Edit template</button>
-  <button class="btn btn-ghost" onclick="resetScores()">↺ Reset Form</button>
-  <button class="btn btn-ghost" onclick="saveEvaluation()">💾 Save to Database</button>
-  <button class="btn btn-ghost" onclick="toggleAnalytics()">📊 Analisis/Edit</button>
-  <button class="btn btn-gold" onclick="copySummary()">Copy summary</button>
-  <button class="btn btn-teal" onclick="window.print()">Print / PDF</button>
+  
+  <button class="mobile-menu-btn" onclick="toggleMenu()">☰ Menu</button>
+  
+  <div class="toolbar-actions" id="toolbarActions">
+      <span id="modeBadge" class="mode-badge mode-score">Score mode</span>
+      <button class="btn btn-ghost" id="toggleBtn" onclick="toggleMode()">✏️ Edit template</button>
+      <button class="btn btn-ghost" onclick="resetScores()">↺ Reset Form</button>
+      <button class="btn btn-ghost" onclick="saveEvaluation()">💾 Save to Cohort</button>
+      <button class="btn btn-ghost" onclick="toggleAnalytics()">📊 Analytics</button>
+      <button class="btn btn-gold" onclick="copySummary()">Copy summary</button>
+      <button class="btn btn-teal" onclick="window.print()">Print / PDF</button>
+  </div>
 </div>
 
 <div class="edit-toolbar">
@@ -254,10 +292,10 @@ body.edit-mode .add-dim-btn{display:block;}
             <div class="rubric-title">Cohort Analytics</div>
             <div class="rubric-course" id="analyticsCourseTitle">Aggregated evaluation data</div>
         </div>
-        <div style="display:flex; gap: 8px;">
+        <div style="display:flex; gap: 8px; flex-wrap: wrap;">
             <button class="btn btn-ghost" style="color: var(--navy); border-color: var(--border);" onclick="toggleAnalytics()">← Back to Grading</button>
             <button class="btn btn-gold" onclick="exportAnalyticsExcel()">Export Excel</button>
-            <button class="btn btn-ghost" style="color: var(--red); border-color: rgba(176,58,46,.3);" onclick="clearAllHistory()">Clear All Data</button>
+            <button class="btn btn-ghost" style="color: var(--red); border-color: rgba(176,58,46,.3);" onclick="clearAllHistory()">Clear All</button>
         </div>
     </div>
 
@@ -277,7 +315,7 @@ body.edit-mode .add-dim-btn{display:block;}
         <div id="chartContainer"></div>
     </div>
 
-    <div class="chart-container" style="padding: 0; overflow: hidden;">
+    <div class="chart-container" style="padding: 0; overflow-x: auto;">
         <table class="history-table">
             <thead>
                 <tr>
@@ -296,36 +334,28 @@ body.edit-mode .add-dim-btn{display:block;}
 <div class="modal-overlay" id="radarModal">
     <div class="modal-content">
         <button class="close-btn" onclick="document.getElementById('radarModal').style.display='none'">✕</button>
-        <div class="chart-title" style="display:block;">Review & Edit Gap Analysis</div>
         
-        <div class="modal-split">
-            <div class="modal-left">
-                <div class="radar-identity">
-                    <div class="radar-id-item"><strong>Name:</strong> <span id="radarStudentName">-</span></div>
-                    <div class="radar-id-item"><strong>ID/NIM:</strong> <span id="radarStudentId">-</span></div>
-                    <div class="radar-id-item"><strong>Date:</strong> <span id="radarStudentDate">-</span></div>
-                    <div class="radar-id-item" style="margin-top: 4px; font-size: 15px; color: var(--teal);">
-                        <strong>Total Score: <span id="radarStudentScore" style="font-weight: 600;">-</span> / 100</strong>
-                    </div>
-                </div>
-
-                <div style="text-align:center; padding: 10px 0; width: 100%;" id="radarSvgContainer"></div>
-                
-                <div class="radar-legend">
-                    <div class="legend-item"><div class="legend-color" style="background:var(--gold);"></div> Student Score</div>
-                    <div class="legend-item"><div class="legend-color" style="background:rgba(42,123,111,0.3);"></div> Cohort Average</div>
-                </div>
+        <div class="modal-col-left">
+            <div class="chart-title" style="display:block;">Review & Gap Analysis</div>
+            <div class="radar-identity">
+                <div class="radar-id-item"><strong>Name:</strong> <span id="radarStudentName">-</span></div>
+                <div class="radar-id-item"><strong>ID/NIM:</strong> <span id="radarStudentId">-</span></div>
+                <div class="radar-id-item"><strong>Date:</strong> <span id="radarStudentDate">-</span></div>
+                <div class="radar-id-item"><strong>Live Total Score:</strong> <span id="radarStudentScore" style="font-size:18px; font-weight:600; color:var(--teal);">-</span> / 100</div>
             </div>
-
-            <div class="modal-right">
-                <div class="radar-feedback-title" style="margin-top: 0;">Adjust Scores (Real-Time)</div>
-                <div id="modalSlidersContainer"></div>
-
-                <div class="radar-feedback-title">Feedback & Notes</div>
-                <textarea class="radar-feedback-text" id="radarFeedbackText" placeholder="Edit notes here..."></textarea>
-                
-                <button class="btn btn-gold" style="width: 100%; padding: 12px; font-size: 14px; margin-top: auto;" onclick="saveModalChanges()">Simpan Perubahan</button>
+            <div style="text-align:center; padding: 0 0 10px 0;" id="radarSvgContainer"></div>
+            <div class="radar-legend">
+                <div class="legend-item"><div class="legend-color" style="background:var(--gold);"></div> Student</div>
+                <div class="legend-item"><div class="legend-color" style="background:rgba(42,123,111,0.3);"></div> Cohort Avg</div>
             </div>
+        </div>
+
+        <div class="modal-col-right">
+            <div class="chart-title" style="font-size: 14px; margin-bottom: 12px; color: var(--slate);">Quick Adjustments</div>
+            <div id="radarQuickEditForm"></div>
+            <span class="field-label" style="margin-top: 8px; margin-bottom:4px; display:block;">Feedback & Notes</span>
+            <textarea id="radarEditFeedback" class="feedback-box" style="min-height: 90px; margin-bottom:12px; font-size: 12px; padding:8px;"></textarea>
+            <button class="btn btn-teal" onclick="saveRadarEdit()" style="width: 100%; padding: 10px;">💾 Save Changes to Record</button>
         </div>
     </div>
 </div>
@@ -376,21 +406,27 @@ var rubric={
 
 var scores={}, nextId=10, editMode=false;
 var PRIORITIES=["high","medium","low"];
+var currentRadarIndex = -1;
+var currentRadarScores = {};
+var currentCohortAverages = {};
+var isDraggingGrid = false;
+
 function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
-// ── DRAFT SYSTEM ────────────────────────────────────────────────────────────
+function toggleMenu() { document.getElementById("toolbarActions").classList.toggle("show"); }
+
 function saveDraft() {
     if(editMode) return;
     var draft = {
-        scores: scores,
-        name: document.getElementById("studentName").value,
-        id: document.getElementById("studentId").value,
-        date: document.getElementById("dateField").value,
+        scores: scores, name: document.getElementById("studentName").value,
+        id: document.getElementById("studentId").value, date: document.getElementById("dateField").value,
         feedback: document.getElementById("feedbackBox").value
     };
     sessionStorage.setItem("rubricDraft", JSON.stringify(draft));
-    document.getElementById("draftBadge").style.display = "inline-block";
+    var badge = document.getElementById("draftBadge");
+    badge.textContent = "Unsaved Draft"; badge.style.display = "inline-block";
 }
+
 function loadDraft() {
     var draftStr = sessionStorage.getItem("rubricDraft");
     if(draftStr) {
@@ -401,33 +437,21 @@ function loadDraft() {
         if(draft.date) document.getElementById("dateField").value = draft.date;
         if(draft.feedback) document.getElementById("feedbackBox").value = draft.feedback;
         document.getElementById("draftBadge").style.display = "inline-block";
-    } else {
-        document.getElementById("dateField").value=new Date().toISOString().split("T")[0];
-    }
-}
-function clearDraft() {
-    sessionStorage.removeItem("rubricDraft");
-    document.getElementById("draftBadge").style.display = "none";
+    } else { document.getElementById("dateField").value=new Date().toISOString().split("T")[0]; }
 }
 
-// ── EXCEL TEMPLATE IMPORT & EXPORT ──────────────────────────────────────────
+function clearDraft() { sessionStorage.removeItem("rubricDraft"); document.getElementById("draftBadge").style.display = "none"; }
+
 function exportExcelTemplate() {
     var dimRows = [];
-    rubric.dimensions.forEach(d => {
-        d.levels.forEach(l => {
-            dimRows.push({"Dim ID": d.id,"Dimension Name": d.name,"Weight": d.weight,"Priority": d.priority,"Level Score": l.score,"Level Label": l.label,"Level Desc": l.desc});
-        });
-    });
-    var gsRows = rubric.gradeScale.map(g => ({"Grade": g.grade,"Min Score": g.min,"Label": g.label}));
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dimRows), "Dimensions");
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(gsRows), "GradeScale");
+    rubric.dimensions.forEach(d => { d.levels.forEach(l => { dimRows.push({"Dim ID": d.id, "Dimension Name": d.name, "Weight": d.weight, "Priority": d.priority, "Level Score": l.score, "Level Label": l.label, "Level Desc": l.desc}); }); });
+    var gsRows = rubric.gradeScale.map(g => ({"Grade": g.grade, "Min Score": g.min, "Label": g.label}));
+    var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dimRows), "Dimensions"); XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(gsRows), "GradeScale");
     XLSX.writeFile(wb, "Rubric_Template.xlsx");
 }
 
 function importExcelTemplate(event) {
-    var file = event.target.files[0];
-    if (!file) return;
+    var file = event.target.files[0]; if (!file) return;
     var reader = new FileReader();
     reader.onload = function(e) {
         var data = new Uint8Array(e.target.result);
@@ -436,37 +460,50 @@ function importExcelTemplate(event) {
             var newRubric = { dimensions: [], gradeScale: [] };
             if(wb.Sheets["GradeScale"]) {
                 var gsData = XLSX.utils.sheet_to_json(wb.Sheets["GradeScale"]);
-                newRubric.gradeScale = gsData.map(r => ({grade: String(r["Grade"]),min: Number(r["Min Score"]),label: String(r["Label"])}));
+                newRubric.gradeScale = gsData.map(r => ({grade: String(r["Grade"]), min: Number(r["Min Score"]), label: String(r["Label"])}));
             }
             if(wb.Sheets["Dimensions"]) {
                 var dimData = XLSX.utils.sheet_to_json(wb.Sheets["Dimensions"]);
                 var dimMap = {};
                 dimData.forEach(r => {
                     var id = r["Dim ID"];
-                    if(!dimMap[id]) dimMap[id] = { id: id, name: String(r["Dimension Name"]), weight: Number(r["Weight"]), priority: String(r["Priority"]).toLowerCase(), levels: [] };
+                    if(!dimMap[id]) { dimMap[id] = { id: id, name: String(r["Dimension Name"]), weight: Number(r["Weight"]), priority: String(r["Priority"]).toLowerCase(), levels: [] }; }
                     dimMap[id].levels.push({ score: Number(r["Level Score"]), label: String(r["Level Label"]), desc: String(r["Level Desc"]) });
                 });
                 newRubric.dimensions = Object.values(dimMap);
             }
-            if(newRubric.dimensions.length > 0) {
-                rubric = newRubric; scores = {}; render(); alert("Template Excel berhasil dimuat!");
-            } else alert("Format file Excel tidak sesuai.");
+            if(newRubric.dimensions.length > 0) { rubric = newRubric; scores = {}; render(); alert("Template Excel berhasil dimuat!"); } 
+            else { alert("Format file Excel tidak sesuai."); }
         } catch(err) { alert("Terjadi kesalahan saat membaca file Excel."); }
     };
-    reader.readAsArrayBuffer(file);
-    event.target.value = '';
+    reader.readAsArrayBuffer(file); event.target.value = '';
 }
 
-// ── RENDER CORE ─────────────────────────────────────────────────────────────
+// FUNGSI RENDER DIPERBARUI: Menyimpan status scroll
 function render(){
-  var c=document.getElementById("dimContainer");
-  c.innerHTML="";
+  // 1. Simpan posisi scroll sebelum komponen digambar ulang
+  var scrollPositions = {};
+  document.querySelectorAll('.dim-card').forEach(function(card) {
+      var wrapper = card.querySelector('.levels-wrapper');
+      if(wrapper) {
+          scrollPositions[card.dataset.id] = wrapper.scrollLeft;
+      }
+  });
+
+  // 2. Gambar ulang komponen
+  var c=document.getElementById("dimContainer"); c.innerHTML="";
   rubric.dimensions.forEach(function(dim,i){c.appendChild(buildCard(dim,i));});
-  renderGradeScaleDisplay();
-  renderGsEditor();
-  updateTotal();
-  checkWeights();
+  renderGradeScaleDisplay(); renderGsEditor(); updateTotal(); checkWeights();
   if(editMode) applyEditableState(true);
+  attachDragEvents();
+
+  // 3. Kembalikan posisi scroll ke tempat semula
+  document.querySelectorAll('.dim-card').forEach(function(card) {
+      var wrapper = card.querySelector('.levels-wrapper');
+      if(wrapper && scrollPositions[card.dataset.id] !== undefined) {
+          wrapper.scrollLeft = scrollPositions[card.dataset.id];
+      }
+  });
 }
 
 function buildCard(dim,idx){
@@ -474,8 +511,7 @@ function buildCard(dim,idx){
   card.className="dim-card priority-"+dim.priority;
   card.dataset.id=dim.id;
   var sorted=dim.levels.slice().sort(function(a,b){return b.score-a.score;});
-  var n=sorted.length;
-  var maxS=n?sorted[0].score:4;
+  var n=sorted.length; var maxS=n?sorted[0].score:4;
 
   var levHtml=sorted.map(function(lvl,rank){
     var c=rankColor(rank,n);
@@ -488,22 +524,43 @@ function buildCard(dim,idx){
       +'<span class="level-badge" style="'+badgeStyle+'"><span class="level-score-dot"></span>'+lvl.score+'/'+maxS+'</span>'
       +'<span class="level-label" style="'+labelStyle+'" contenteditable="false" onblur="updateLevelLabel('+dim.id+','+lvl.score+',this.textContent)">'+esc(lvl.label)+'</span>'
       +'<span class="level-desc" style="'+descStyle+'" contenteditable="false" onblur="updateLevelDesc('+dim.id+','+lvl.score+',this.textContent)">'+esc(lvl.desc)+'</span>'
-      +'<div class="level-edit-bar">'
-      +'<button class="lev-btn" onclick="event.stopPropagation();addLevel('+dim.id+','+lvl.score+',\'after\')">+ after</button>'
-      +'<button class="lev-btn" onclick="event.stopPropagation();addLevel('+dim.id+','+lvl.score+',\'before\')">+ before</button>'
-      +(n>1?'<button class="lev-btn lev-btn-del" onclick="event.stopPropagation();removeLevel('+dim.id+','+lvl.score+')">remove</button>':'')
-      +'</div></div>';
+      +'<div class="level-edit-bar"><button class="lev-btn" onclick="event.stopPropagation();addLevel('+dim.id+','+lvl.score+',\'after\')">+ after</button><button class="lev-btn" onclick="event.stopPropagation();addLevel('+dim.id+','+lvl.score+',\'before\')">+ before</button>'+(n>1?'<button class="lev-btn lev-btn-del" onclick="event.stopPropagation();removeLevel('+dim.id+','+lvl.score+')">remove</button>':'')+'</div></div>';
   }).join("");
 
-  card.innerHTML='<div class="dim-header">'
-    +'<span class="dim-number">'+String(idx+1).padStart(2,"0")+'</span>'
+  card.innerHTML='<div class="dim-header"><span class="dim-number">'+String(idx+1).padStart(2,"0")+'</span>'
     +'<div class="dim-name-wrap"><div class="dim-name" contenteditable="false" onblur="updateDimName('+dim.id+',this.textContent)">'+esc(dim.name)+'</div></div>'
     +'<button class="dim-priority-badge" onclick="cyclePriority('+dim.id+')">'+dim.priority.toUpperCase()+'</button>'
-    +'<span class="dim-weight">'+dim.weight+'%</span>'
-    +'<input class="dim-weight-input" type="number" min="1" max="100" value="'+dim.weight+'" onchange="updateDimWeight('+dim.id+',this.value)"/>'
+    +'<span class="dim-weight">'+dim.weight+'%</span><input class="dim-weight-input" type="number" min="1" max="100" value="'+dim.weight+'" onchange="updateDimWeight('+dim.id+',this.value)"/>'
     +'<button class="dim-remove" onclick="removeDimension('+dim.id+')">✕</button></div>'
-    +'<div class="levels-grid" style="grid-template-columns:repeat('+n+',1fr);">'+levHtml+'</div>';
+    +'<div class="levels-wrapper"><div class="levels-grid" style="grid-template-columns:repeat('+n+',1fr);">'+levHtml+'</div></div>';
   return card;
+}
+
+function attachDragEvents() {
+    const sliders = document.querySelectorAll('.levels-wrapper');
+    sliders.forEach(slider => {
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            isDraggingGrid = false; 
+            slider.classList.add('active');
+            startX = e.pageX - slider.offsetLeft;
+            scrollLeft = slider.scrollLeft;
+        });
+        slider.addEventListener('mouseleave', () => { isDown = false; slider.classList.remove('active'); });
+        slider.addEventListener('mouseup', () => { isDown = false; slider.classList.remove('active'); });
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const walk = (x - startX) * 1.5; 
+            if (Math.abs(walk) > 5) { isDraggingGrid = true; }
+            slider.scrollLeft = scrollLeft - walk;
+        });
+    });
 }
 
 function addLevel(d,r,p){ var dim=rubric.dimensions.find(x=>x.id===d); var sorted=dim.levels.sort((a,b)=>b.score-a.score); var idx=sorted.findIndex(x=>x.score===r); sorted.splice(p==='after'?idx+1:idx,0,{score:0,label:"New",desc:"Desc"}); var n=sorted.length; sorted.forEach((l,i)=>l.score=n-i); dim.levels=sorted; delete scores[d]; render();}
@@ -515,10 +572,13 @@ function removeGrade(g){rubric.gradeScale=rubric.gradeScale.filter(x=>x.grade!==
 function addGradeRow(){rubric.gradeScale.push({grade:"?",min:0,label:"New"}); renderGsEditor(); renderGradeScaleDisplay();}
 
 function selectScore(dimId,score){
-  if(editMode)return;
+  if(editMode) return;
+  if(isDraggingGrid) {
+      isDraggingGrid = false; 
+      return; 
+  }
   scores[dimId]=scores[dimId]===score?undefined:score;
-  render(); 
-  saveDraft(); 
+  render(); saveDraft(); 
 }
 
 function calcTotal(){var t=0; rubric.dimensions.forEach(d=>{if(scores[d.id]!==undefined){var mx=Math.max(...d.levels.map(l=>l.score)); t+=(scores[d.id]/mx)*d.weight;}}); return t;}
@@ -532,12 +592,7 @@ function updateTotal(){
 }
 
 function resetScores(){
-    scores={};
-    document.getElementById("studentName").value="";
-    document.getElementById("studentId").value="";
-    document.getElementById("feedbackBox").value="";
-    clearDraft();
-    render();
+    scores={}; document.getElementById("studentName").value=""; document.getElementById("studentId").value=""; document.getElementById("feedbackBox").value=""; clearDraft(); render();
 }
 
 function applyEditableState(on){
@@ -575,7 +630,6 @@ function copySummary(){
   navigator.clipboard.writeText(lines.join("\n")).then(()=>alert("Copied!")).catch(()=>prompt("Copy this:",lines.join("\n")));
 }
 
-// ── COHORT & ANALYTICS ──────────────────────────────────────────────────────
 function getHistory() { return JSON.parse(localStorage.getItem("rubricHistory") || "[]"); }
 function saveHistory(arr) { localStorage.setItem("rubricHistory", JSON.stringify(arr)); }
 
@@ -610,16 +664,12 @@ function toggleAnalytics() {
     document.getElementById("gradingView").style.display = isScore ? "none" : "block";
     document.getElementById("analyticsView").style.display = isScore ? "block" : "none";
     if(isScore) renderAnalytics();
+    document.getElementById("toolbarActions").classList.remove("show"); 
 }
 
 function calculateAverages(history) {
     var totals = {}, counts = {};
-    history.forEach(r => {
-        Object.keys(r.scores).forEach(dId => {
-            totals[dId] = (totals[dId] || 0) + r.scores[dId];
-            counts[dId] = (counts[dId] || 0) + 1;
-        });
-    });
+    history.forEach(r => { Object.keys(r.scores).forEach(dId => { totals[dId] = (totals[dId] || 0) + r.scores[dId]; counts[dId] = (counts[dId] || 0) + 1; }); });
     var averages = {};
     Object.keys(totals).forEach(dId => averages[dId] = totals[dId] / counts[dId]);
     return averages;
@@ -628,20 +678,14 @@ function calculateAverages(history) {
 function renderAnalytics() {
     var history = getHistory();
     document.getElementById("statTotalStudents").textContent = history.length;
-    
-    if (history.length === 0) {
-        document.getElementById("statAvgScore").textContent = "0.0";
-        document.getElementById("chartContainer").innerHTML = "<p style='color:var(--slate); font-size:13px;'>Belum ada data.</p>";
-        document.getElementById("historyTableBody").innerHTML = "";
-        return;
-    }
+    if (history.length === 0) { document.getElementById("statAvgScore").textContent = "0.0"; document.getElementById("chartContainer").innerHTML = "<p style='color:var(--slate); font-size:13px;'>Belum ada data.</p>"; document.getElementById("historyTableBody").innerHTML = ""; return; }
 
     document.getElementById("statAvgScore").textContent = (history.reduce((s,r)=>s+r.total,0)/history.length).toFixed(1);
-    var averages = calculateAverages(history);
+    currentCohortAverages = calculateAverages(history);
     
     var chartHtml = "";
     rubric.dimensions.forEach(dim => {
-        var avg = averages[dim.id] || 0;
+        var avg = currentCohortAverages[dim.id] || 0;
         var mx = Math.max(...dim.levels.map(l=>l.score));
         var pct = mx>0 ? (avg/mx)*100 : 0;
         var col = pct>=75 ? "var(--teal)" : pct>=50 ? "var(--gold)" : "var(--red)";
@@ -649,86 +693,57 @@ function renderAnalytics() {
     });
     document.getElementById("chartContainer").innerHTML = chartHtml;
 
-    // TOMBOL TERINTEGRASI: "Review / Edit" untuk membuka Split-View Radar
     document.getElementById("historyTableBody").innerHTML = history.map((r,i) => 
-        `<tr>
-            <td>${esc(r.date)}</td><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td style="font-weight:600;">${r.total.toFixed(1)}</td>
-            <td>
-                <a class="action-link" onclick="openRadar(${i})">Review / Edit</a>
-                <a class="action-link del" onclick="deleteHistoryRecord(${i})">Hapus</a>
-            </td>
-        </tr>`
+        `<tr><td>${esc(r.date)}</td><td>${esc(r.name)}</td><td>${esc(r.id)}</td><td style="font-weight:600;">${r.total.toFixed(1)}</td>
+        <td><a class="action-link" onclick="openRadar(${i})">Review / Edit</a><a class="action-link del" onclick="deleteHistoryRecord(${i})">Hapus</a></td></tr>`
     ).join("");
 }
 
-// ── REAL-TIME EDITABLE RADAR MODAL (SPLIT VIEW) ─────────────────────────────
-var editingIndex = -1;
-var tempEditScores = {};
-var cohortAveragesForRadar = {};
+function exportAnalyticsExcel() {
+    var history = getHistory(); if (!history.length) return alert("Belum ada data untuk di-export.");
+    var rows = history.map(r => {
+        var obj = { "Date": r.date, "Student Name": r.name, "ID / NIM": r.id, "Total Score": r.total };
+        rubric.dimensions.forEach(d => { obj[d.name] = r.scores[d.id] || 0; });
+        obj["Feedback & Notes"] = r.feedback || ""; return obj;
+    });
+    var ws = XLSX.utils.json_to_sheet(rows); var wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Cohort Analytics"); XLSX.writeFile(wb, "Cohort_Analytics_Export.xlsx");
+}
+
+function clearAllHistory() { if(confirm("Hapus SELURUH data angkatan ini?")) { localStorage.removeItem("rubricHistory"); renderAnalytics(); } }
 
 function openRadar(index) {
+    currentRadarIndex = index;
     var history = getHistory();
     var student = history[index];
-    cohortAveragesForRadar = calculateAverages(history);
-    editingIndex = index;
-    tempEditScores = Object.assign({}, student.scores);
+    currentRadarScores = Object.assign({}, student.scores);
     
     document.getElementById("radarStudentName").textContent = student.name;
     document.getElementById("radarStudentId").textContent = student.id || "N/A";
     document.getElementById("radarStudentDate").textContent = student.date || "N/A";
-    document.getElementById("radarFeedbackText").value = student.feedback || "";
+    document.getElementById("radarEditFeedback").value = student.feedback || "";
 
-    renderModalSliders();
-    updateModalRadarView(); // Gambar grafik dan hitung skor pertama kali
-
-    document.getElementById("radarModal").style.display = "flex";
-}
-
-function renderModalSliders() {
-    var html = '';
-    rubric.dimensions.forEach(dim => {
-        var currentScore = tempEditScores[dim.id];
-        html += `
-        <div class="modal-edit-row">
-            <div class="modal-edit-label">${esc(dim.name)}</div>
-            <select class="modal-edit-select" onchange="handleModalScoreChange(${dim.id}, this.value)">
-                <option value="" disabled ${currentScore === undefined ? 'selected' : ''}>Pilih nilai...</option>
-                ${dim.levels.map(l => `<option value="${l.score}" ${l.score == currentScore ? 'selected' : ''}>${l.score} - ${esc(l.label)}</option>`).join('')}
-            </select>
-        </div>`;
-    });
-    document.getElementById("modalSlidersContainer").innerHTML = html;
-}
-
-function handleModalScoreChange(dimId, val) {
-    tempEditScores[dimId] = parseFloat(val);
-    updateModalRadarView(); // Hitung total baru & redraw SVG langsung
-}
-
-function updateModalRadarView() {
-    // 1. Recalculate Score
-    var t = 0;
+    var formHtml = "";
     rubric.dimensions.forEach(d => {
-        if(tempEditScores[d.id] !== undefined) {
-            var mx = Math.max(...d.levels.map(l=>l.score));
-            t += (tempEditScores[d.id] / mx) * d.weight;
-        }
+        formHtml += `<div class="qe-group"><label class="qe-label" title="${esc(d.name)}">${esc(d.name)}</label><select class="qe-select" onchange="updateLiveRadarScore(${d.id}, this.value)">`;
+        var sortedLevels = d.levels.slice().sort((a,b) => b.score - a.score);
+        sortedLevels.forEach(l => { var isSel = (currentRadarScores[d.id] == l.score) ? "selected" : ""; formHtml += `<option value="${l.score}" ${isSel}>${l.score} - ${esc(l.label)}</option>`; });
+        formHtml += `</select></div>`;
     });
-    document.getElementById("radarStudentScore").textContent = t.toFixed(1);
+    document.getElementById("radarQuickEditForm").innerHTML = formHtml;
+    document.getElementById("radarModal").style.display = "flex";
+    drawRadarLiveSVG();
+}
 
-    // 2. Draw SVG
+function updateLiveRadarScore(dimId, newScore) { currentRadarScores[dimId] = parseFloat(newScore); drawRadarLiveSVG(); }
+
+function drawRadarLiveSVG() {
     var size = 260, center = size/2, radius = 90;
-    var dims = rubric.dimensions;
-    var num = dims.length;
+    var dims = rubric.dimensions; var num = dims.length;
     var svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
     
     for(var lvl=1; lvl<=4; lvl++) {
-        var r = radius * (lvl/4);
-        var pts = [];
-        for(var i=0; i<num; i++) {
-            var ang = (Math.PI*2*i)/num - Math.PI/2;
-            pts.push(`${center + r*Math.cos(ang)},${center + r*Math.sin(ang)}`);
-        }
+        var r = radius * (lvl/4); var pts = [];
+        for(var i=0; i<num; i++) { var ang = (Math.PI*2*i)/num - Math.PI/2; pts.push(`${center + r*Math.cos(ang)},${center + r*Math.sin(ang)}`); }
         svg += `<polygon points="${pts.join(' ')}" fill="none" stroke="var(--border)" stroke-width="1"/>`;
     }
     
@@ -736,64 +751,38 @@ function updateModalRadarView() {
         var ang = (Math.PI*2*i)/num - Math.PI/2;
         var x2 = center + radius*Math.cos(ang), y2 = center + radius*Math.sin(ang);
         svg += `<line x1="${center}" y1="${center}" x2="${x2}" y2="${y2}" stroke="var(--border)" stroke-width="1"/>`;
-        var lx = center + (radius+20)*Math.cos(ang), ly = center + (radius+15)*Math.sin(ang);
-        var lbl = d.name.length > 12 ? d.name.substring(0,10)+"..." : d.name;
+        var lx = center + (radius+25)*Math.cos(ang), ly = center + (radius+15)*Math.sin(ang);
+        var lbl = d.name.length > 15 ? d.name.substring(0,12)+"..." : d.name;
         svg += `<text x="${lx}" y="${ly}" font-size="10" font-family="DM Sans" text-anchor="middle" fill="var(--slate)">${esc(lbl)}</text>`;
     });
 
     var getPoly = function(dataObj) {
         var pts = [];
         dims.forEach((d, i) => {
-            var val = dataObj[d.id] || 0;
-            var mx = Math.max(...d.levels.map(l=>l.score));
-            var r = radius * (val/mx);
-            var ang = (Math.PI*2*i)/num - Math.PI/2;
+            var val = dataObj[d.id] || 0; var mx = Math.max(...d.levels.map(l=>l.score));
+            var r = mx > 0 ? radius * (val/mx) : 0; var ang = (Math.PI*2*i)/num - Math.PI/2;
             pts.push(`${center + r*Math.cos(ang)},${center + r*Math.sin(ang)}`);
         });
         return pts.join(' ');
     };
 
-    // Cohort (Teal) vs Current Edits (Gold)
-    svg += `<polygon points="${getPoly(cohortAveragesForRadar)}" fill="var(--teal)" fill-opacity="0.2" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4" style="transition: all 0.3s ease;"/>`;
-    svg += `<polygon points="${getPoly(tempEditScores)}" fill="var(--gold)" fill-opacity="0.4" stroke="var(--gold)" stroke-width="2" style="transition: all 0.3s ease;"/>`;
+    svg += `<polygon points="${getPoly(currentCohortAverages)}" fill="var(--teal)" fill-opacity="0.2" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4"/>`;
+    svg += `<polygon points="${getPoly(currentRadarScores)}" fill="var(--gold)" fill-opacity="0.4" stroke="var(--gold)" stroke-width="2" style="transition: all 0.3s ease;"/>`;
     svg += `</svg>`;
-    
     document.getElementById("radarSvgContainer").innerHTML = svg;
+
+    var liveTotal = 0;
+    dims.forEach(d => { if(currentRadarScores[d.id] !== undefined){ var mx=Math.max(...d.levels.map(l=>l.score)); liveTotal += (currentRadarScores[d.id]/mx)*d.weight; } });
+    var scoreDisplay = document.getElementById("radarStudentScore");
+    scoreDisplay.textContent = liveTotal.toFixed(1);
+    scoreDisplay.style.color = liveTotal >= 80 ? "var(--teal)" : liveTotal >= 60 ? "var(--gold)" : "var(--red)";
 }
 
-function saveModalChanges() {
-    var history = getHistory();
-    var student = history[editingIndex];
-    
-    // Timpa data lama dengan data baru dari modal
-    student.scores = Object.assign({}, tempEditScores);
-    student.feedback = document.getElementById("radarFeedbackText").value.trim();
-    student.total = parseFloat(document.getElementById("radarStudentScore").textContent);
-    
-    history[editingIndex] = student;
-    saveHistory(history);
-    
-    document.getElementById("radarModal").style.display = "none";
-    renderAnalytics(); // Refresh halaman analitik agar nilai terbaru muncul
-}
-
-function clearAllHistory() {
-    if(confirm("Hapus SELURUH data angkatan ini?")) { localStorage.removeItem("rubricHistory"); renderAnalytics(); }
-}
-
-function exportAnalyticsExcel() {
-    var history = getHistory();
-    if (!history.length) return alert("Belum ada data untuk di-export.");
-    var rows = history.map(r => {
-        var obj = {"Date": r.date, "Student Name": r.name, "ID / NIM": r.id, "Total Score": r.total};
-        rubric.dimensions.forEach(d => { obj[d.name] = r.scores[d.id] || 0; });
-        obj["Feedback & Notes"] = r.feedback || "";
-        return obj;
-    });
-    var ws = XLSX.utils.json_to_sheet(rows);
-    var wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Cohort Analytics");
-    XLSX.writeFile(wb, "Cohort_Analytics_Export.xlsx");
+function saveRadarEdit() {
+    var history = getHistory(); var finalTotal = 0;
+    rubric.dimensions.forEach(d => { if(currentRadarScores[d.id] !== undefined){ var mx = Math.max(...d.levels.map(l=>l.score)); finalTotal += (currentRadarScores[d.id]/mx)*d.weight; } });
+    history[currentRadarIndex].scores = currentRadarScores; history[currentRadarIndex].total = parseFloat(finalTotal.toFixed(2)); history[currentRadarIndex].feedback = document.getElementById("radarEditFeedback").value.trim();
+    saveHistory(history); document.getElementById('radarModal').style.display='none'; renderAnalytics(); 
 }
 
 // ── INIT ────────────────────────────────────────────────────────────────────
