@@ -1,4 +1,5 @@
 # Pro-Rubric Evaluator & Cohort Analytics 📊
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A lightweight, single-page web application (SPA) designed to standardize academic evaluations, streamline live grading during presentations/mock defenses, and provide instant cohort analytics.
 
